@@ -10,5 +10,5 @@ class PPInference_Engine{
 
     void Infer(std::vector<std::map<std::string,InBlob>> &inputs, std::vector<OutBlob> *outputs)
   private:
-    std::unique_ptr<paddle::PaddlePredictor> predictor_
+    std::unique_ptr<paddle::PaddlePredictor> predictor;
 }

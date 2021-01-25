@@ -13,9 +13,9 @@ class BasePreprocess {
     
     ~BasePreprocess() {}
   
-    bool Init(YAML::Node config);
+    bool Init(YAML::Node &config);
 
-    virtual bool Run(std::vector<cv::mat> &imgs, YANL::Node config, std::vector<std::vector<Inblob>> *inputs, std::vector<Shapeblob> shape_traces)
+   virtual bool Run(std::vector<cv::mat> &imgs, YANL::Node config, std::vector<std::vector<Inblob>> *inputs, std::vector<Shapeblob> shape_traces)
   
   private:
     std::shared_ptr<Transform> CreateTransform(const std::string& name);

@@ -1,7 +1,8 @@
 #pragma once
 
 
-class BaseResult{
+struct Result{
+
 }
 
 class DetResult:BaseResult{

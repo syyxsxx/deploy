@@ -7,16 +7,13 @@ class InBlob{
   public:
     // data
     template <typename T>
-    std::vector<T> *data;
+    std::vector<T> data;
 
     // data name
     std::string name;
 
     // data shape
     std::vector<int> shape;
-
-    // index
-    int index;
 
     // data dtype
     int dtype;
