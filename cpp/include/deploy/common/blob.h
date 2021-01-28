@@ -3,12 +3,13 @@
 include <vector>
 include <map>
 
-class InBlob{
+namespace Deploy {
+
+class DataBlob{
   public:
     // data
-    template <typename T>
-    std::vector<T> data;
-
+    char *data;
+    
     // data name
     std::string name;
 
@@ -20,21 +21,7 @@ class InBlob{
 
 }
 
-
-class OutBlob{
-  public:
-    // output data
-    char *output_data;
-  
-    // output name
-    std::string name; 
-    
-    // output shape
-    std::vector<int> shape;
-}
-
-
-class ShapeBlob{
+class ShapeInfo{
   public:
     
     // shape trace
@@ -44,3 +31,5 @@ class ShapeBlob{
     std::vector<std::string> transform_order;
    
 }
+
+}//namespace

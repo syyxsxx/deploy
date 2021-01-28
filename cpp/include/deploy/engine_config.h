@@ -1,11 +1,11 @@
 #pragma once
 
 
-class Engine_config{
+class EngineConfig{
 
 }
 
-class PPI_onfig:Engine_cofig{
+class PpiConfig:EngineConfig{
   public:
      bool use_trt;
      bool use_gpu;
