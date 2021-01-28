@@ -2,24 +2,24 @@
 
 #include "yaml-cpp/yaml.h"
 
-#include "include/deploy/config/ppdet_cfg.h"
+#include "include/deploy/config/config.h"
 
 namespace Deploy {
 
-bool ConfigPaser::Load(const std::string &cfg_file, const std::string &pp_type) {
+bool ConfigParser::Load(const std::string &cfg_file, const std::string &pp_type) {
     //Load config as a YAML::Node
-    det_config = YAML::LoadFile(cfg_file);
-    //Paser yaml file
+    config = YAML::LoadFile(cfg_file);
+    //Parser yaml file
     if (pp_type == 'det') {
-        if(!Det_paser(det_config)) {
-            std::cerr << "Fail to paser PaddleDection yaml file" << std::endl;
+        if(!Det_parser(config)) {
+            std::cerr << "Fail to parser PaddleDection yaml file" << std::endl;
             return false
         }
     }
     
 }
 
-bool ConfigPaser::Det_paser(const YAML::Node &det_config) {
+bool ConfigParser::Det_parser(const YAML::Node &det_config) {
     config_["model_format"] = "Paddle";
     //arch support value:YOLO, SSD, RetinaNet, RCNN, Face
     if(det_config["arch"].IsDefined()) {
@@ -47,7 +47,7 @@ bool ConfigPaser::Det_paser(const YAML::Node &det_config) {
     if(det_config["Preprocess"].IsDefined()) {
         YAML::Node preprocess_info = det_config["Preprocess"];
         for (const auto& preprocess_op : preprocess_info) {
-            if(!Det_paser_transforms(preprocess_op)) {
+            if(!Det_parser_transforms(preprocess_op)) {
                 std::cerr << "Fail to parser PaddleDetection transforms" << std::endl;
                 return false
             }
@@ -70,13 +70,15 @@ bool Det_build_transforms(const YAML::Node &preprocess_op) {
             config_["transforms"]["Normalize"]["std"].push_back(std[i]);
             config_["transforms"]["Normalize"]["min_val"].push_back(0);
             config_["transforms"]["Normalize"]["max_val"].push_back(255);
-        }        
+        }    
+        return true;    
     }
     else if (preprocess_op["type"] == "Permute") {
         config_["transforms"]["Permute"] = True;
         if (preprocess_op["to_bgr"]) {
             config_["transforms"]["RGB2BRG"] = True;
         }
+        return true;
     }
     else if (preprocess_op["type"] == "Resize") {
         int max_size = preprocess_op["max_size"].as<int>()
@@ -84,6 +86,10 @@ bool Det_build_transforms(const YAML::Node &preprocess_op) {
             config_["transforms"]["ResizeByShort"]["target_size"] = preprocess_op["target_size"].as<int>();
             config_["transforms"]["ResizeByShort"]["max_size"] = max_size;
             config_["transforms"]["ResizeByShort"]["interp"] = preprocess_op["interp"].as<int>();
+            if (preprocess_op["image_shape"].IsDefined()){
+                config_["transforms"]["Padding"]["width"] = max_size;
+                config_["transforms"]["Padding"]["height"] = max_size;
+            }
         }
         else {
             config_["transforms"]["Resize"]["width"] = preprocess_op["target_size"].as<int>();
@@ -91,6 +97,15 @@ bool Det_build_transforms(const YAML::Node &preprocess_op) {
             config_["transforms"]["Resize"]["max_size"] = max_size;
             config_["transforms"]["Resize"]["interp"] = preprocess_op["interp"].as<int>();
         }
+        return true;
+    }
+    else if (preprocess_op["type"] == "PadStride") {
+        config_["transforms"]["Padding"]["stride"] = preprocess_op["stride"].as<int>();
+        return true;
+    }
+    else {
+        std::cerr << preprocess_op["type"] << " :Can't parser" << std::endl;
+        return false;
     }
 }
 

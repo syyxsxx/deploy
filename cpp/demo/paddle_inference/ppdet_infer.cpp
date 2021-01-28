@@ -17,9 +17,9 @@ DEFINE_string(image, "", "Path of test image file");
 int main(int argc, char** argv) {
     // Parsing command-line
     google::ParseCommandLineFlags(&argc, &argv, true);
-    //paser yaml file
-    Deploy::ConfigPaser paser;
-    paser.Load(FLAGS_cfg_file);
+    //parser yaml file
+    Deploy::ConfigParser parser;
+    parser.Load(FLAGS_cfg_file);
 
     // data preprocess
     // preprocess init

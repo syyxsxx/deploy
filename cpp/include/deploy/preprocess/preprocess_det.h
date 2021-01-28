@@ -5,8 +5,10 @@
 
 namespace Deploy {
 
-class DetProecess:BaseProcess {
-    private:
+class DetProecess : pubulic BaseProcess {
+    public:
+        
     
 }
-}
+
+}//namespace

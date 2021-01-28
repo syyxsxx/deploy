@@ -6,19 +6,24 @@
 
 namespace Deploy {
 
-class ConfigPaser {
+class ConfigParser {
   public:
-    ConfigPaser() {}
+    ConfigParser() {}
 
-    ~ConfigPaser() {}
+    ~ConfigParser() {}
 
     bool Load(const std::string &cfg_file, const std::string &pp_type);
 
+    template <typename T>
+    const T& Get(const string &name) const {
+      return config_.as<T>();
+    }
+
     
   private:
-    bool Det_paser(const YAML::Node &det_config);
-    bool Det_paser_transforms(const YAML::Node &preprocess_op);
+    bool Det_parser(const YAML::Node &det_config);
 
+    bool Det_parser_transforms(const YAML::Node &preprocess_op);
 
     YAML::Node config_;
 }

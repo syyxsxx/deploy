@@ -11,7 +11,7 @@ class Transform {
   
   virtual void Init(const YAML::Node& item) = 0;
   
-  virtual void Shape_infer(ShapeBlob* shape) = 0;
+  virtual void Shape_infer(ShapeInfo* shape) = 0;
   
   virtual bool Run(cv::Mat* im) = 0;
 };
