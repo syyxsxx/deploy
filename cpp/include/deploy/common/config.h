@@ -16,9 +16,10 @@ class ConfigParser {
 
     template <typename T>
     const T& Get(const string &name) const {
-      return config_.as<T>();
+      return config_[name].as<T>();
     }
 
+    YAML::Node Get_transforms();
     
   private:
     bool Det_parser(const YAML::Node &det_config);

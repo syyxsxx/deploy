@@ -1,2 +1,2 @@
 # deploy
-PaddleX Deploy module
+Paddle Deploy module

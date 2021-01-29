@@ -2,6 +2,44 @@
 
 namespace Deploy {   
 
+bool BasePreprocess::BuildTransform(const ConfigParser &parser) {
+    transforms.clear();
+    transforms_node = parser.Get_transforms();
+    for (const auto& node : transforms_node) {
+        std::string name = node.begin()->first.as<std::string>();
+        std::shared_ptr<Transform> transform = CreateTransform(name);
+        transform->Init(node.begin()->second);
+        transforms.push_back(transform);
+    }
+}
 
+std::shared_ptr<Transform> BasePreprocess::CreateTransform(
+    const std::string& transform_name) {
+  if (transform_name == "Normalize") {
+    return std::make_shared<Normalize>();
+  } else if (transform_name == "ResizeByShort") {
+    return std::make_shared<ResizeByShort>();
+  } else if (transform_name == "ResizeByLong") {
+    return std::make_shared<ResizeByLong>();
+  } else if (transform_name == "CenterCrop") {
+    return std::make_shared<CenterCrop>();
+  } else if (transform_name == "Permute") {
+    return std::make_shared<Permute>();
+  } else if (transform_name == "Resize") {
+    return std::make_shared<Resize>();
+  } else if (transform_name == "Padding") {
+    return std::make_shared<Padding>();
+  } else if (transform_name == "Clip") {
+    return std::make_shared<Clip>();
+  } else if (transform_name == "RGB2BGR") {
+    return std::make_shared<RGB2BGR>();
+  } else if (transform_name == "BGR2RGB") {
+    return std::make_shared<BGR2RGB>();
+  } else {
+    std::cerr << "There's unexpected transform(name='" << transform_name
+              << "')." << std::endl;
+    exit(-1);
+  }
+}
     
 } // namespace name

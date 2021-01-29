@@ -19,6 +19,10 @@ bool ConfigParser::Load(const std::string &cfg_file, const std::string &pp_type)
     
 }
 
+YAML::Node ConfigParser::Get_transforms() {
+    return _config["transforms"]
+}
+
 bool ConfigParser::Det_parser(const YAML::Node &det_config) {
     config_["model_format"] = "Paddle";
     //arch support value:YOLO, SSD, RetinaNet, RCNN, Face
