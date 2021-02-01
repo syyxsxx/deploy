@@ -16,7 +16,14 @@ class DataBlob{
     // data shape
     std::vector<int> shape;
 
-    // data dtype
+    /* data dtype
+    0: int
+    1: float
+    2: double
+    3: char
+    4: unsigned int
+    5: unsigned long int
+    */
     int dtype;
 
 }

@@ -8,13 +8,16 @@ namespace Deploy {
 
 class DetProecess : pubulic BasePreprocess {
     public:
-    DetProecess() {}
+        DetProecess() {}
     
-    ~DetProecess() {}
+        ~DetProecess() {}
   
-    virtual bool Init(const ConfigParser &parser);
+        virtual bool Init(const ConfigParser &parser);
 
-    virtual bool DetProecess::Run(const std::vector<cv::Mat> &imgs, std::vector<std::vector<Inblob>> *inputs, std::vector<ShapeInfo> *shape_traces);
+        virtual bool DetProecess::Run(const std::vector<cv::Mat> &imgs, std::vector<std::vector<DataBlob>> *inputs, std::vector<ShapeInfo> *shape_traces);
+
+    private:
+        std::string model_arch_;
     
 }
 

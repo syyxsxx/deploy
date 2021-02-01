@@ -27,7 +27,7 @@ bool ConfigParser::Det_parser(const YAML::Node &det_config) {
     config_["model_format"] = "Paddle";
     //arch support value:YOLO, SSD, RetinaNet, RCNN, Face
     if(det_config["arch"].IsDefined()) {
-        config_["model_name"] = det_config["arch"];
+        config_["model_name"] = det_config["arch"].as<std::string>();
     }
     else {
         std::cerr << "Fail to find arch in PaddleDection yaml file" << std::endl;

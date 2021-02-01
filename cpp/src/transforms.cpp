@@ -34,7 +34,7 @@ bool Normalize::Run(cv::Mat* im) {
     return true;
 }
 
-bool Normalize::Shape_infer(ShapeInfo* shape_trace) {
+void Normalize::Shape_infer(ShapeInfo* shape_trace) {
     std::vector<int> before_shape = Get_before_shape(*shape);
     shape_trace->transform_order.push_back("Normalize");
     shape_trace->shape["Normalize"] = before_shape;
@@ -64,7 +64,7 @@ bool ResizeByShort::Run(cv::Mat* im) {
     return true;
 }
 
-bool ResizeByShort::Shape_infer(ShapeInfo* shape_trace) {
+void ResizeByShort::Shape_infer(ShapeInfo* shape_trace) {
     std::vector<int> before_shape = Get_before_shape(*shape);
     shape_trace->transform_order.push_back("ResizeByShort");
     float scale = GenerateScale(before_shape[0], before_shape[1]);
@@ -98,7 +98,7 @@ bool ResizeByLong::Run(cv::Mat* im, ImageBlob* data) {
     return true;
 }
 
-bool ResizeByLong::Shape_infer(ShapeInfo* shape_trace) {
+void ResizeByLong::Shape_infer(ShapeInfo* shape_trace) {
     std::vector<int> before_shape = Get_before_shape(*shape);
     shape_trace->transform_order.push_back("ResizeByLong");
     float scale = GenerateScale(before_shape[0], before_shape[1]);
@@ -120,7 +120,7 @@ bool Resize::Run(cv::Mat* im, ImageBlob* data) {
   return true;
 }
 
-bool Resize::Shape_infer(ShapeInfo* shape_trace) {
+void Resize::Shape_infer(ShapeInfo* shape_trace) {
     std::vector<int> before_shape = Get_before_shape(*shape);
     shape_trace->transform_order.push_back("Resize");
     std::vector<int> after_shape = {width_, height_}
@@ -141,7 +141,7 @@ bool CenterCrop::Run(cv::Mat* im) {
     return true;
 }
 
-bool CenterCrop::Shape_infer(ShapeInfo* shape_trace) {
+void CenterCrop::Shape_infer(ShapeInfo* shape_trace) {
     std::vector<int> before_shape = Get_before_shape(*shape);
     shape_trace->transform_order.push_back("CenterCrop");
     std::vector<int> after_shape = {width_, height_}
@@ -191,7 +191,7 @@ void Padding::MultichannelPadding(cv::Mat* im,
   *im = padded_im;
 }
 
-bool Padding::Run(cv::Mat* im, ImageBlob* data) {
+bool Padding::Run(cv::Mat* im) {
 
   int padding_w = 0;
   int padding_h = 0;
@@ -222,14 +222,14 @@ bool Padding::Run(cv::Mat* im, ImageBlob* data) {
   return true;
 }
 
-bool Padding::Shape_infer(ShapeInfo* shape_trace) {
+void Padding::Shape_infer(ShapeInfo* shape_trace) {
     std::vector<int> before_shape = Get_before_shape(*shape);
     shape_trace->transform_order.push_back("Padding");
     std::vector<int> after_shape = {width_, height_}
     shape_trace->shape["Padding"] = after_shape;
 }
 
-bool Clip::Run(cv::Mat* im, ImageBlob* data) {
+bool Clip::Run(cv::Mat* im) {
   std::vector<cv::Mat> split_im;
   cv::split(*im, split_im);
   for (int c = 0; c < im->channels(); c++) {
@@ -244,11 +244,50 @@ bool Clip::Run(cv::Mat* im, ImageBlob* data) {
   return true;
 }
 
-bool Clip::Shape_infer(ShapeInfo* shape_trace) {
+void Clip::Shape_infer(ShapeInfo* shape_trace) {
     std::vector<int> before_shape = Get_before_shape(*shape);
     shape_trace->transform_order.push_back("Clip");
-    shape_trace->shape["Padding"] = before_shape;
+    shape_trace->shape["Clip"] = before_shape;
+}
+
+bool BGR2RGB::Run(cv::Mat* im) {
+    cv::cvtColor(*im, *im, cv::COLOR_BGR2RGB);
+    return true;
+}
+
+void BGR2RGB::Shape_infer(ShapeInfo* shape_trace) {
+    std::vector<int> before_shape = Get_before_shape(*shape);
+    shape_trace->transform_order.push_back("BGR2RGB");
+    shape_trace->shape["BGR2RGB"] = before_shape;
+}
+
+bool RGB2BGR::Run(cv::Mat* im) {
+    cv::cvtColor(*im, *im, cv::COLOR_RGB2BGR);
+    return true;
+}
+
+void RGB2BGR::Shape_infer(ShapeInfo* shape_trace) {
+    std::vector<int> before_shape = Get_before_shape(*shape);
+    shape_trace->transform_order.push_back("RGB2BGR");
+    shape_trace->shape["RGB2BGR"] = before_shape;
+}
+
+bool Permute::Run(cv::Mat* im) {
+  int rh = im->rows;
+  int rw = im->cols;
+  int rc = im->channels();
+  float data = im.data;
+  for (int i = 0; i < rc; ++i) {
+    cv::extractChannel(*im, cv::Mat(rh, rw, CV_32FC1, data + i * rh * rw), i);
+  }
+  return true;
+}
+
+void Permute::Shape_infer(ShapeInfo* shape_trace) {
+    std::vector<int> before_shape = Get_before_shape(*shape);
+    shape_trace->transform_order.push_back("Permute");
+    shape_trace->shape["Permute"] = before_shape;
 }
 
 
-}
+}//namespace

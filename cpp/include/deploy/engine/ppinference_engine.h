@@ -1,4 +1,3 @@
-  
 // Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,29 +14,15 @@
 
 #pragma once
 
-#include <vector>
+#include "blob.h"
 
+#include "paddle_inference_api.h"
 
-#include "deploy/blob.h"
-#include "transform.h"
-#include "config.h" 
-
-class BasePreprocess {
+class PpInferenceEngine{
   public:
-    BasePreprocess() {}
-    
-    ~BasePreprocess() {}
-  
-    virtual bool Init(const ConfigParser &parser) = 0;
+    void Init(std::string model_dir, PPI_config &config)
 
-    virtual bool Run(const std::vector<cv::mat> &imgs, std::vector<std::vector<DataBlob>> *inputs, std::vector<ShapeInfo> *shape_traces) = 0;
-
-  protected:
-
-    bool BuildTransform(); 
-    
-    std::vector<std::shared_ptr<Transform>> transforms;
-
+    void Infer(std::vector<std::vector<std::DateBlob>> &inputs, std::vector<std::vector<DateBlob>> *outputs)
   private:
-    std::shared_ptr<Transform> CreateTransform(const std::string& name);
+    std::unique_ptr<paddle::PaddlePredictor> predictor_;
 }
