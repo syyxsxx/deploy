@@ -293,7 +293,7 @@ set(DEPS ${DEPS} ${OpenCV_LIBS})
 #ADD_DEPENDENCIES(paddlex_inference ext-yaml-cpp)
 #target_link_libraries(paddlex_inference ${DEPS})
 
-add_executable(ppdet_infer demo/paddle_inference/ppdet_infer.cpp src/engine/ppinference_engine.cpp src/postprocess/ppdet_post_proc.cpp src/preprocess/ppdet_pre_proc.cpp src/preprocess.cpp src/config.cpp src/transforms.cpp)
+add_executable(ppdet_infer demo/paddle_inference/ppdet_infer.cpp src/engine/ppinference_engine.cpp src/postprocess/ppdet_post_proc.cpp src/preprocess/ppdet_pre_proc.cpp src/preprocess/preprocess.cpp src/config.cpp src/transforms.cpp)
 ADD_DEPENDENCIES(ppdet_infer ext-yaml-cpp)
 target_link_libraries(ppdet_infer ${DEPS})
 

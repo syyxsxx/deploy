@@ -82,7 +82,7 @@ bool ResizeByShort::Run(cv::Mat* im) {
 
 bool ResizeByShort::Shape_infer(ShapeInfo* shape_trace) {
     std::vector<int> before_shape = Get_before_shape(*shape);
-    shape_trace->transform_order.push_back("ResizeByShort");
+    shape_trace->transform_order.push_back("ResizelsByShort");
     float scale = GenerateScale(before_shape[0], before_shape[1]);
     int width = static_cast<int>(round(scale * im->cols));
     int height = static_cast<int>(round(scale * im->rows));

@@ -15,8 +15,8 @@
 #include <glog/logging.h>
 
 #include "yaml-cpp/yaml.h"
-#include "include/deploy/config.h"
-#include "include/deploy/blob.h"
+#include "include/deploy/common/config.h"
+#include "include/deploy/common/blob.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>

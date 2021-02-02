@@ -16,7 +16,7 @@
 
 #include "yaml-cpp/yaml.h"
 
-#include "include/deploy/config/config.h"
+#include "include/deploy/common/config.h"
 
 namespace Deploy {
 
