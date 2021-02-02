@@ -1,4 +1,3 @@
-  
 // Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,12 +24,15 @@ bool DetProecess::Init(const ConfigParser &parser) {
     model_arch_ = parser.Get<std::string>("model_name")
 }
 
-bool DetProecess::Run(const std::vector<cv::Mat> &imgs, std::vector<std::vector<DataBlob>> *inputs, std::vector<ShapeInfo> *shape_traces){
+bool DetProecess::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *inputs, std::vector<ShapeInfo> *shape_traces){
     inputs.clear();
-    for (int i=0; i < imgs.size(); i++) {
+    int batchsize = imgs.size();
+    DataBlob img_blob;
+    DataBlob im_size_blob;
+    for (int i=0; i < batchsize; i++) {
         ShapeInfo im_shape;
         cv::Mat im = imgs[i].clone();
-        //(w,h)
+        //origin img shape(w,h)
         std::vector<int> size = {im.cols, im.rows};
         im_shape.transform_order.push_back("Origin")
         im_shape.shape["Origin"] = size;
@@ -44,22 +46,27 @@ bool DetProecess::Run(const std::vector<cv::Mat> &imgs, std::vector<std::vector<
                 return false;
             }
         }
-        shape_traces->push_back(im_shape);
+        shape_traces->push_back(std::move(im_shape));
         std::vector<DataBlob> input;
         // img data for input
-        DataBlob img_blob;
         img_blob.name = "image";
         std::vector<int> input_shape = im_shape.shape[im_shape.tranform_order.back()];
-        img_blob.shape.assign(input_shape.begin(), input_shape.end());
-        img_blob.dtype = 1;
-        int input_size = 1;
-        for (const auto& i : input_shape) {
-            input_size *= i;
-        }
-        memrcy(img_blob.data, im.data, input_size * sizeof(float));
+        img_blob.shape = {batchsize, 3, input_shape[1], input_shape[0]}
+        img_blob.dtype = 0;
+        int input_size = input_shape[0] * input_shape[1];
+        memrcy(img_blob.data + i * input_shape * sizeof(float) , im.data, input_size * sizeof(float));
         // Additional information for input
-        
-
+        if (model_arch_ == "YOLO") {
+            DataBlob im_size_blob;
+            im_size_blob.name = "im_size"
+            im_size_blob.shape = {batchsize, 2}
+            im_size_blob.dtype = 2;
+            memrcy(im_size_blob.data + i * 2 * sizeof(int), size.data(), 2 * sizeof(int));
+        }
+    }
+    inputs->push_back(std::move(img_blob));
+    if (model_arch_ == "YOLO") {
+        inputs->push_back(std::move(im_size_blob));
     }
 }
 

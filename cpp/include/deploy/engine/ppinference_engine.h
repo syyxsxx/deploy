@@ -20,9 +20,11 @@
 
 class PpInferenceEngine{
   public:
-    void Init(std::string model_dir, PPI_config &config)
+    void Init(std::string model_dir, PPI_config &config);
 
-    void Infer(std::vector<std::vector<std::DateBlob>> &inputs, std::vector<std::vector<DateBlob>> *outputs)
+    void Infer(std::vector<std::DateBlob>> &inputs, std::vector<DateBlob> *outputs);
   private:
     std::unique_ptr<paddle::PaddlePredictor> predictor_;
-}
+
+
+};

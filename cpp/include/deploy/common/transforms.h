@@ -1,3 +1,17 @@
+// Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #pragma once
 
 #include <vector>
@@ -7,6 +21,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "blob.h"
+
+namespace Deploy {
 
 class Transform {
   public:
@@ -71,6 +87,7 @@ class ResizeByShort : public Transform {
       }
     }
   virtual bool Run(cv::Mat* im, ImageBlob* data);
+  virtual void Shape_infer(ShapeInfo* shape);
 
  private:
     float GenerateScale(const cv::Mat& im);
@@ -96,6 +113,7 @@ class ResizeByLong : public Transform {
     }
   }
   virtual bool Run(cv::Mat* im);
+  virtual void Shape_infer(ShapeInfo* shape);
 
   private:
   float GenerateScale(const cv::Mat& im);
@@ -118,6 +136,7 @@ class Resize : public Transform {
     }
   }
   virtual bool Run(cv::Mat* im);
+  virtual void Shape_infer(ShapeInfo* shape);
 
  private:
   int height_;
@@ -130,6 +149,7 @@ class BGR2RGB : public Transform {
     virtual void Init(const YAML::Node& item) {
     }
     virtual bool Run(cv::Mat* im);
+    virtual void Shape_infer(ShapeInfo* shape);
 }
 
 class RGB2BGR : public Transform {
@@ -137,6 +157,7 @@ class RGB2BGR : public Transform {
     virtual void Init(const YAML::Node& item) {
     }
     virtual bool Run(cv::Mat* im);
+    virtual void Shape_infer(ShapeInfo* shape);
 }
 
 class Padding : public Transform {
@@ -161,6 +182,7 @@ class Padding : public Transform {
     }
   }
   virtual bool Run(cv::Mat* im);
+  virtual void Shape_infer(ShapeInfo* shape);
   virtual void GeneralPadding(cv::Mat* im,
                               const std::vector<float> &padding_val,
                               int padding_w, int padding_h);
@@ -181,6 +203,7 @@ class CenterCrop : public Transform {
     width_ = item["height"].as<int>();
   }
   virtual bool Run(cv::Mat* im);
+  virtual void Shape_infer(ShapeInfo* shape);
 
  private:
   int height_;
@@ -196,8 +219,36 @@ class Clip : public Transform {
   }
 
   virtual bool Run(cv::Mat* im);
+  virtual void Shape_infer(ShapeInfo* shape);
 
  private:
   std::vector<float> min_val_;
   std::vector<float> max_val_;
 };
+
+
+class Clip : public Transform {
+ public:
+  virtual void Init(const YAML::Node& item) {
+    min_val_ = item["min_val"].as<std::vector<float>>();
+    max_val_ = item["max_val"].as<std::vector<float>>();
+  }
+
+  virtual bool Run(cv::Mat* im);
+  virtual void Shape_infer(ShapeInfo* shape);
+
+ private:
+  std::vector<float> min_val_;
+  std::vector<float> max_val_;
+};
+
+
+class Permute : public Transform {
+ public:
+  virtual void Init(const YAML::Node& item) {}
+  virtual bool Run(cv::Mat* im);
+  virtual void Shape_infer(ShapeInfo* shape);
+
+};
+
+}//namespace

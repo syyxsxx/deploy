@@ -12,27 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#pragma once
-
-#include "include/deploy/preprocess/preprocess.h"
+#include <vector>
 #include "include/deploy/common/blob.h"
-
+#include "include/deploy/common/config.h"
 
 namespace Deploy {
 
-class DetProecess : pubulic BasePreprocess {
+struct Box {
+  int category_id;
+  // category label this box belongs to
+  std::string category;
+  // confidence score
+  float score;
+  std::vector<float> coordinate;
+  Mask<int> mask;
+};
+
+struct PpDetResult {
+  // target boxes
+  std::vector<Box> boxes;
+  int mask_resolution;
+};
+
+class PpDetPostProc {
     public:
-        DetProecess() {}
-    
-        ~DetProecess() {}
-  
-        virtual bool Init(const ConfigParser &parser);
-
-        virtual bool DetProecess::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *inputs, std::vector<ShapeInfo> *shape_traces);
-
+        void Init(const ConfigParser &parser);
+        bool Run(const std::vector<DataBlob> &outputs, std::vector<ShapeInfo> &shape_traces, std::vector<PpDetResult> det_results);
     private:
         std::string model_arch_;
-    
 }
 
-}//namespace
+}
