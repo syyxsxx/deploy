@@ -25,19 +25,19 @@ bool ConfigParser::Load(const std::string &cfg_file, const std::string &pp_type)
     config = YAML::LoadFile(cfg_file);
     //Parser yaml file
     if (pp_type == 'det') {
-        if(!Det_parser(config)) {
+        if(!DetParser(config)) {
             std::cerr << "Fail to parser PaddleDection yaml file" << std::endl;
-            return false
+            return false;
         }
     }
     
 }
 
-YAML::Node ConfigParser::Get_transforms() {
-    return _config["transforms"]
+YAML::Node ConfigParser::GetTransforms() {
+    return _config["transforms"];
 }
 
-bool ConfigParser::Det_parser(const YAML::Node &det_config) {
+bool ConfigParser::DetParser(const YAML::Node &det_config) {
     config_["model_format"] = "Paddle";
     //arch support value:YOLO, SSD, RetinaNet, RCNN, Face
     if(det_config["arch"].IsDefined()) {
@@ -45,7 +45,7 @@ bool ConfigParser::Det_parser(const YAML::Node &det_config) {
     }
     else {
         std::cerr << "Fail to find arch in PaddleDection yaml file" << std::endl;
-        return false
+        return false;
     }   
     config_["toolkit"] = "PaddleDetection";
     config_["toolkit_version"] = "Unknown";
@@ -59,30 +59,30 @@ bool ConfigParser::Det_parser(const YAML::Node &det_config) {
     }
     else {
         std::cerr << "Fail to find label_list in  PaddleDection yaml file" << std::endl;
-        return false
+        return false;
     }
     //Preprocess support Normalize, Permute, Resize, PadStride
     if(det_config["Preprocess"].IsDefined()) {
         YAML::Node preprocess_info = det_config["Preprocess"];
         for (const auto& preprocess_op : preprocess_info) {
-            if(!Det_parser_transforms(preprocess_op)) {
+            if(!DetParsertTansforms(preprocess_op)) {
                 std::cerr << "Fail to parser PaddleDetection transforms" << std::endl;
-                return false
+                return false;
             }
         }    
     }
     else {
         std::cerr << "Fail to find Preprocess in  PaddleDection yaml file" << std::endl;
-        return false
+        return false;
     }
 
 }
 
-bool Det_parser_transforms(const YAML::Node &preprocess_op) {
+bool ConfigParser::DetParserTransforms(const YAML::Node &preprocess_op) {
     if (preprocess_op["type"] == "Normalize") {
         std::vector<float> mean = preprocess_op.as<std::vector<float>>();
         std::vector<float> scale = preprocess_op.as<std::vector<float>>();
-        config_["transforms"]["Normalize"]["is_scale"] = preprocess_op["is_scale"].as<bool>()
+        config_["transforms"]["Normalize"]["is_scale"] = preprocess_op["is_scale"].as<bool>();
         for (int i = 0; i < mean.size(); i++) {
             config_["transforms"]["Normalize"]["mean"].push_back(mean[i]);
             config_["transforms"]["Normalize"]["std"].push_back(std[i]);
@@ -99,7 +99,7 @@ bool Det_parser_transforms(const YAML::Node &preprocess_op) {
         return true;
     }
     else if (preprocess_op["type"] == "Resize") {
-        int max_size = preprocess_op["max_size"].as<int>()
+        int max_size = preprocess_op["max_size"].as<int>();
         if (max_size !=0 && (config_["model_name"] == "RCNN" || config_["model_name"] == "RetinaNet")) {
             config_["transforms"]["ResizeByShort"]["target_size"] = preprocess_op["target_size"].as<int>();
             config_["transforms"]["ResizeByShort"]["max_size"] = max_size;

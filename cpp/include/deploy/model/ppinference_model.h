@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 #include ""
 
@@ -17,4 +17,4 @@ class PaddleInferenceModel {
   private:
     YAML::Node config_;
     
-}
+}*/

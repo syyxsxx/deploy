@@ -27,6 +27,11 @@ DEFINE_string(model_dir, "", "Path of inference model");
 DEFINE_string(cfg_file, "", "Path of yaml file");
 DEFINE_string(pp_type, "", "Type of Paddle toolkit");
 DEFINE_string(image, "", "Path of test image file");
+DEFINE_string(image_list, "", "Path of test image list file");
+DEFINE_bool(use_gpu, false, "Infering with GPU or CPU");
+DEFINE_int32(gpu_id, 0, "GPU card id");
+DEFINE_int32(batch_size, 1, "Batch size of infering");
+
 
 int main(int argc, char** argv) {
     // Parsing command-line
@@ -38,19 +43,22 @@ int main(int argc, char** argv) {
     // data preprocess
     // preprocess init
     Deploy::DetPreprocess detpreprocess;
-    detpreprocess.Init(parser)
+    detpreprocess.Init(parser);
     // postprocess init
     Deploy::DetPreprocess detpostprocess;
-    detpostprocess.Init(parser)
+    detpostprocess.Init(parser);
+    //engine init
+    Deploy::PaddleInferenceEngine ppi_engine;
+    Deploy::PpiConfig ppi_config;
+    ppi_engine.Init(FLAGS_model_dir, ppi_config);
     if (FLAGS_image_list != "") {
         //img_list
-    }
-    else {
+    } else {
         //read image
-        std::vector<cv::mat> imgs
+        std::vector<cv::mat> imgs;
         cv::mat img;
         img = cv::imread(FLAGS_cfg_image);
-        imgs.push_back(std::move(img))
+        imgs.push_back(std::move(img));
         //create inpus and shape_traces
         std::vector<Deploy::ShapeInfo> shape_traces;
         std::vector<Deploy::DataBlob> inputs;
@@ -58,14 +66,9 @@ int main(int argc, char** argv) {
         detpreprocess.Run(imgs, &inputs, &shape_traces);
         //infer
         std::vector<Deploy::Datablob> outputs;
-        Deploy::PpInferenceEngine ppi_engine;
-        Deploy::PpiConfig ppi_config;
-        ppi_engine.Init(FLAGS_model_dir, ppi_config);
         ppi_engine.Infer(inputs, &outputs);
-
         //postprocess
-        
         std::vector<Deploy::DetResult> detresults;
-        detpostprocess.Run(detresults, shape_traces)
+        detpostprocess.Run(detresults, shape_traces);
     }
 }

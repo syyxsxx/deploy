@@ -29,7 +29,7 @@ class Transform {
 
     virtual void Init(const YAML::Node& item) = 0;
   
-    virtual void Shape_infer(ShapeInfo* shape) = 0;
+    virtual bool Shape_infer(ShapeInfo* shape) = 0;
   
     virtual bool Run(cv::Mat* im) = 0;
 };
@@ -54,7 +54,7 @@ class Normalize : public Transform {
       }
     }
     virtual bool Run(cv::Mat* im);
-    virtual void Shape_infer(ShapeInfo* shape);
+    virtual bool Shape_infer(ShapeInfo* shape);
   
   private:
     bool is_scale_;
@@ -87,7 +87,7 @@ class ResizeByShort : public Transform {
       }
     }
   virtual bool Run(cv::Mat* im, ImageBlob* data);
-  virtual void Shape_infer(ShapeInfo* shape);
+  virtual bool Shape_infer(ShapeInfo* shape);
 
  private:
     float GenerateScale(const cv::Mat& im);
@@ -113,7 +113,7 @@ class ResizeByLong : public Transform {
     }
   }
   virtual bool Run(cv::Mat* im);
-  virtual void Shape_infer(ShapeInfo* shape);
+  virtual bool Shape_infer(ShapeInfo* shape);
 
   private:
   float GenerateScale(const cv::Mat& im);
@@ -136,7 +136,7 @@ class Resize : public Transform {
     }
   }
   virtual bool Run(cv::Mat* im);
-  virtual void Shape_infer(ShapeInfo* shape);
+  virtual bool Shape_infer(ShapeInfo* shape);
 
  private:
   int height_;
@@ -149,7 +149,7 @@ class BGR2RGB : public Transform {
     virtual void Init(const YAML::Node& item) {
     }
     virtual bool Run(cv::Mat* im);
-    virtual void Shape_infer(ShapeInfo* shape);
+    virtual bool Shape_infer(ShapeInfo* shape);
 }
 
 class RGB2BGR : public Transform {
@@ -157,7 +157,7 @@ class RGB2BGR : public Transform {
     virtual void Init(const YAML::Node& item) {
     }
     virtual bool Run(cv::Mat* im);
-    virtual void Shape_infer(ShapeInfo* shape);
+    virtual bool Shape_infer(ShapeInfo* shape);
 }
 
 class Padding : public Transform {
@@ -182,7 +182,7 @@ class Padding : public Transform {
     }
   }
   virtual bool Run(cv::Mat* im);
-  virtual void Shape_infer(ShapeInfo* shape);
+  virtual bool Shape_infer(ShapeInfo* shape);
   virtual void GeneralPadding(cv::Mat* im,
                               const std::vector<float> &padding_val,
                               int padding_w, int padding_h);
@@ -203,7 +203,7 @@ class CenterCrop : public Transform {
     width_ = item["height"].as<int>();
   }
   virtual bool Run(cv::Mat* im);
-  virtual void Shape_infer(ShapeInfo* shape);
+  virtual bool Shape_infer(ShapeInfo* shape);
 
  private:
   int height_;
@@ -219,7 +219,7 @@ class Clip : public Transform {
   }
 
   virtual bool Run(cv::Mat* im);
-  virtual void Shape_infer(ShapeInfo* shape);
+  virtual bool Shape_infer(ShapeInfo* shape);
 
  private:
   std::vector<float> min_val_;
@@ -235,7 +235,7 @@ class Clip : public Transform {
   }
 
   virtual bool Run(cv::Mat* im);
-  virtual void Shape_infer(ShapeInfo* shape);
+  virtual bool Shape_infer(ShapeInfo* shape);
 
  private:
   std::vector<float> min_val_;
@@ -247,7 +247,7 @@ class Permute : public Transform {
  public:
   virtual void Init(const YAML::Node& item) {}
   virtual bool Run(cv::Mat* im);
-  virtual void Shape_infer(ShapeInfo* shape);
+  virtual bool Shape_infer(ShapeInfo* shape);
 
 };
 

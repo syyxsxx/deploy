@@ -39,12 +39,12 @@ class ConfigParser {
       return config_[name].as<T>();
     }
 
-    YAML::Node Get_transforms();
+    YAML::Node GetTransforms();
     
   private:
-    bool Det_parser(const YAML::Node &det_config);
+    bool DetParser(const YAML::Node &det_config);
 
-    bool Det_parser_transforms(const YAML::Node &preprocess_op);
+    bool DetParserTransforms(const YAML::Node &preprocess_op);
 
     YAML::Node config_;
 }

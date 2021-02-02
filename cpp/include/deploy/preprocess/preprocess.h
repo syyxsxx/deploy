@@ -16,11 +16,11 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
-
-#include "deploy/blob.h"
-#include "transform.h"
-#include "config.h" 
+#include "include/deploy/common/blob.h"
+#include "include/deploy/common/transform.h"
+#include "include/deploy/common/config.h" 
 
 class BasePreprocess {
   public:

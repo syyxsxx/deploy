@@ -18,7 +18,7 @@ namespace Deploy {
 
 bool BasePreprocess::BuildTransform(const ConfigParser &parser) {
     transforms.clear();
-    transforms_node = parser.Get_transforms();
+    transforms_node = parser.GetTransforms();
     for (const auto& node : transforms_node) {
         std::string name = node.begin()->first.as<std::string>();
         std::shared_ptr<Transform> transform = CreateTransform(name);
