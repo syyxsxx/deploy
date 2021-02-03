@@ -15,6 +15,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -87,11 +88,11 @@ class ResizeByShort : public Transform {
         max_size_ = -1;
       }
     }
-  virtual bool Run(cv::Mat* im, ImageBlob* data);
+  virtual bool Run(cv::Mat* im);
   virtual bool Shape_infer(ShapeInfo* shape);
 
  private:
-    float GenerateScale(const cv::Mat& im);
+    float GenerateScale(const int origin_w, const int origin_h);
     int target_size_;
     int max_size_;
     int interp_;
@@ -117,7 +118,7 @@ class ResizeByLong : public Transform {
   virtual bool Shape_infer(ShapeInfo* shape);
 
   private:
-  float GenerateScale(const cv::Mat& im);
+  float GenerateScale(const int origin_w, const int origin_h);
   int target_size_;
   int max_size_;
   int interp_;
@@ -209,22 +210,6 @@ class CenterCrop : public Transform {
  private:
   int height_;
   int width_;
-};
-
-
-class Clip : public Transform {
- public:
-  virtual void Init(const YAML::Node& item) {
-    min_val_ = item["min_val"].as<std::vector<float>>();
-    max_val_ = item["max_val"].as<std::vector<float>>();
-  }
-
-  virtual bool Run(cv::Mat* im);
-  virtual bool Shape_infer(ShapeInfo* shape);
-
- private:
-  std::vector<float> min_val_;
-  std::vector<float> max_val_;
 };
 
 

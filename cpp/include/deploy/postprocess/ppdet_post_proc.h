@@ -18,6 +18,19 @@
 
 namespace Deploy {
 
+
+struct Mask {
+  // raw data of mask
+  std::vector<T> data;
+  // the shape of mask
+  std::vector<int> shape;
+  void clear() {
+    data.clear();
+    shape.clear();
+  }
+};
+
+
 struct Box {
   int category_id;
   // category label this box belongs to
@@ -32,6 +45,9 @@ struct PpDetResult {
   // target boxes
   std::vector<Box> boxes;
   int mask_resolution;
+  void clear() {
+      boxes.clear();
+  }
 };
 
 class PpDetPostProc {

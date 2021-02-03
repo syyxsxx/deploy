@@ -15,6 +15,7 @@
 #pragma once
 
 #include <string>
+#include <iostream>
 
 #include "yaml-cpp/yaml.h"
 
@@ -35,7 +36,7 @@ class ConfigParser {
     bool Load(const std::string &cfg_file, const std::string &pp_type);
 
     template <typename T>
-    const T& Get(const string &name) const {
+    const T& Get(const std::string &name) const {
       return config_[name].as<T>();
     }
 

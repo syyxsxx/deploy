@@ -37,8 +37,8 @@ bool PpDetPostProc::Run(const std::vector<DataBlob> &outputs, std::vector<ShapeI
         int rh = 1;
         int rw = 1;
         if (model_arch_ == "SSD" || model_arch_ == "Face") {
-            rh =  shape_traces[i].shape["Origin"][1];
-            rw =  shape_traces[i].shape["Origin"][0];
+            rh =  shape_traces[i].shape[0][1];
+            rw =  shape_traces[i].shape[0][0];
         }
         for (int j = lod_vector[0][i]; j < lod_vector[0][i + 1]; ++j) {
             Box box;
@@ -54,7 +54,6 @@ bool PpDetPostProc::Run(const std::vector<DataBlob> &outputs, std::vector<ShapeI
             box.coordinate = {xmin, ymin, wd, hd};
             results->boxes.push_back(std::move(box));
     }
-    
 
 }
 

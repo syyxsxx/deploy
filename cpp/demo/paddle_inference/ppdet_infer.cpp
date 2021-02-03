@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
     google::ParseCommandLineFlags(&argc, &argv, true);
     //parser yaml file
     Deploy::ConfigParser parser;
-    parser.Load(FLAGS_cfg_file, pptype);
+    parser.Load(FLAGS_cfg_file, FLAGS_pptype);
 
     // data preprocess
     // preprocess init
@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
         std::vector<Deploy::Datablob> outputs;
         ppi_engine.Infer(inputs, &outputs);
         //postprocess
-        std::vector<Deploy::DetResult> detresults;
+        std::vector<Deploy::PpDetResult> detresults;
         detpostprocess.Run(detresults, shape_traces);
     }
 }

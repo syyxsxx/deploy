@@ -17,6 +17,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 #include "include/deploy/common/blob.h"
 #include "include/deploy/common/transforms.h"
@@ -30,7 +31,7 @@ class BasePreprocess {
   
     virtual bool Init(const ConfigParser &parser) = 0;
 
-    virtual bool Run(const std::vector<cv::mat> &imgs, std::vector<DataBlob> *inputs, std::vector<ShapeInfo> *shape_traces) = 0;
+    virtual bool Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *inputs, std::vector<ShapeInfo> *shape_traces) = 0;
 
   protected:
 

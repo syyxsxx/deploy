@@ -16,6 +16,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 #include "include/deploy/common/blob.h"
 

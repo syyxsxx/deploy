@@ -48,7 +48,7 @@ class ShapeInfo{
   public:
     
     // shape trace
-    std::map<std::string transform, std::vector<int>> shape;
+    std::vector<std::vector<int> > shape;
     
     // transform order
     std::vector<std::string> transform_order;

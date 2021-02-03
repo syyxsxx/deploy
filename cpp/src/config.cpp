@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <string>
+#include <iostream>
 
 #include "yaml-cpp/yaml.h"
 
@@ -24,7 +25,7 @@ bool ConfigParser::Load(const std::string &cfg_file, const std::string &pp_type)
     //Load config as a YAML::Node
     YAML::Node config = YAML::LoadFile(cfg_file);
     //Parser yaml file
-    if (pp_type == 'det') {
+    if (pp_type == "det") {
         if(!DetParser(config)) {
             std::cerr << "Fail to parser PaddleDection yaml file" << std::endl;
             return false;
@@ -79,7 +80,7 @@ bool ConfigParser::DetParser(const YAML::Node &det_config) {
 }
 
 bool ConfigParser::DetParserTransforms(const YAML::Node &preprocess_op) {
-    if (preprocess_op["type"] == "Normalize") {
+    if (preprocess_op["type"].as<std::string>() == "Normalize") {
         std::vector<float> mean = preprocess_op.as<std::vector<float>>();
         std::vector<float> scale = preprocess_op.as<std::vector<float>>();
         config_["transforms"]["Normalize"]["is_scale"] = preprocess_op["is_scale"].as<bool>();
@@ -91,16 +92,16 @@ bool ConfigParser::DetParserTransforms(const YAML::Node &preprocess_op) {
         }    
         return true;    
     }
-    else if (preprocess_op["type"] == "Permute") {
-        config_["transforms"]["Permute"] = True;
+    else if (preprocess_op["type"].as<std::string>() == "Permute") {
+        config_["transforms"]["Permute"] = true;
         if (preprocess_op["to_bgr"]) {
-            config_["transforms"]["RGB2BRG"] = True;
+            config_["transforms"]["RGB2BRG"] = true;
         }
         return true;
     }
-    else if (preprocess_op["type"] == "Resize") {
+    else if (preprocess_op["type"].as<std::string>() == "Resize") {
         int max_size = preprocess_op["max_size"].as<int>();
-        if (max_size !=0 && (config_["model_name"] == "RCNN" || config_["model_name"] == "RetinaNet")) {
+        if (max_size !=0 && (config_["model_name"].as<std::string>() == "RCNN" || config_["model_name"].as<std::string>() == "RetinaNet")) {
             config_["transforms"]["ResizeByShort"]["target_size"] = preprocess_op["target_size"].as<int>();
             config_["transforms"]["ResizeByShort"]["max_size"] = max_size;
             config_["transforms"]["ResizeByShort"]["interp"] = preprocess_op["interp"].as<int>();
@@ -117,12 +118,12 @@ bool ConfigParser::DetParserTransforms(const YAML::Node &preprocess_op) {
         }
         return true;
     }
-    else if (preprocess_op["type"] == "PadStride") {
+    else if (preprocess_op["type"].as<std::string>() == "PadStride") {
         config_["transforms"]["Padding"]["stride"] = preprocess_op["stride"].as<int>();
         return true;
     }
     else {
-        std::cerr << preprocess_op["type"] << " :Can't parser" << std::endl;
+        std::cerr << preprocess_op["type"].as<std::string>() << " :Can't parser" << std::endl;
         return false;
     }
 }

@@ -34,7 +34,7 @@ bool DetProecess::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *i
         //origin img shape(w,h)
         std::vector<int> size = {im.cols, im.rows};
         im_shape.transform_order.push_back("Origin")
-        im_shape.shape["Origin"] = size;
+        im_shape.shape.push_back(size);
         for (int j=0; j < transforms.size(); j++) {
             if (!transforms[j]->Run(&im)) {
                 std::cerr << "Apply transforms to image failed!" << std::endl;
