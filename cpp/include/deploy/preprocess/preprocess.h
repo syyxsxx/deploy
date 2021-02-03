@@ -34,7 +34,7 @@ class BasePreprocess {
 
   protected:
 
-    bool BuildTransform(); 
+    bool BuildTransform(const ConfigParser &parser); 
     
     std::vector<std::shared_ptr<Transform>> transforms;
 

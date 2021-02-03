@@ -20,7 +20,7 @@ namespace Deploy {
 
 bool PaddleDetPreProc::Init(const ConfigParser &parser) {
     BuildTransform(parser);
-    model_arch_ = parser.Get<std::string>("model_name")
+    model_arch_ = parser.Get<std::string>("model_name");
 }
 
 bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *inputs, std::vector<ShapeInfo> *shape_traces) {
@@ -49,14 +49,14 @@ bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlo
         std::vector<DataBlob> input;
         // img data for input
         int input_size = input_shape[0] * input_shape[1] * 3;
-        memrcy(img_blob.data + i * input_shape * sizeof(float) , im.data, input_size * sizeof(float));
+        memcpy(img_blob.data + i * input_shape * sizeof(float) , im.data, input_size * sizeof(float));
         // Additional information for input
         if (model_arch_ == "YOLO") {
-            memrcy(im_size_blob.data + i * 2 * sizeof(int), size.data(), 2 * sizeof(int));
+            memcpy(im_size_blob.data + i * 2 * sizeof(int), size.data(), 2 * sizeof(int));
         }
     }
     std::vector<int> input_shape = (*shape_traces)[0].back();
-    img_blob.shape = {batchsize, 3, input_shape[1], input_shape[0]}
+    img_blob.shape = {batchsize, 3, input_shape[1], input_shape[0]};
     img_blob.dtype = 0;
     img_blob.name = "image";
     inputs->push_back(std::move(img_blob));

@@ -28,7 +28,7 @@ class PaddleDetPreProc : public BasePreprocess {
     public:
         virtual bool Init(const ConfigParser &parser);
 
-        virtual bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *inputs, std::vector<ShapeInfo> *shape_traces);
+        virtual bool Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *inputs, std::vector<ShapeInfo> *shape_traces);
 
     private:
         std::string model_arch_;

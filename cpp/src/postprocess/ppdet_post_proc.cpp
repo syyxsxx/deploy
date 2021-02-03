@@ -20,7 +20,7 @@ void PaddleDetPostProc::Init(const ConfigParser &parser) {
     model_arch_ = parser.Get<std::string>("model_name");
     labels_.clear();
     int i = 0;
-    for (auto item : parser.Get<std::string>("labels") ) {
+    for (auto &item : parser.Get<std::string>("labels") ) {
         std::string label = item;
         labels_[i] = label;
         i++;
