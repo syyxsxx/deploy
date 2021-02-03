@@ -35,7 +35,7 @@ bool ConfigParser::Load(const std::string &cfg_file, const std::string &pp_type)
 }
 
 YAML::Node ConfigParser::GetTransforms() {
-    return _config["transforms"];
+    return config_["transforms"];
 }
 
 bool ConfigParser::DetParser(const YAML::Node &det_config) {
@@ -66,7 +66,7 @@ bool ConfigParser::DetParser(const YAML::Node &det_config) {
     if(det_config["Preprocess"].IsDefined()) {
         YAML::Node preprocess_info = det_config["Preprocess"];
         for (const auto& preprocess_op : preprocess_info) {
-            if(!DetParsertTansforms(preprocess_op)) {
+            if(!DetParserTansforms(preprocess_op)) {
                 std::cerr << "Fail to parser PaddleDetection transforms" << std::endl;
                 return false;
             }
@@ -82,7 +82,7 @@ bool ConfigParser::DetParser(const YAML::Node &det_config) {
 bool ConfigParser::DetParserTransforms(const YAML::Node &preprocess_op) {
     if (preprocess_op["type"].as<std::string>() == "Normalize") {
         std::vector<float> mean = preprocess_op.as<std::vector<float>>();
-        std::vector<float> scale = preprocess_op.as<std::vector<float>>();
+        std::vector<float> std = preprocess_op.as<std::vector<float>>();
         config_["transforms"]["Normalize"]["is_scale"] = preprocess_op["is_scale"].as<bool>();
         for (int i = 0; i < mean.size(); i++) {
             config_["transforms"]["Normalize"]["mean"].push_back(mean[i]);

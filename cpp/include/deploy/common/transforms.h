@@ -167,7 +167,7 @@ class Padding : public Transform {
   virtual void Init(const YAML::Node& item) {
     if (item["stride"].IsDefined()) {
       stride_ = item["stride"].as<int>();
-      if (coarsest_stride_ < 1) {
+      if (stride_ < 1) {
         std::cerr << "[Padding] coarest_stride should greater than 0"
                   << std::endl;
         exit(-1);

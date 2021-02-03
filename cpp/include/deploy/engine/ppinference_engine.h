@@ -22,9 +22,11 @@
 
 #include "paddle_inference_api.h"
 
+namespace Deploy {
+
 class PaddleInferenceEngine{
   public:
-    void Init(std::string model_dir, PPI_config &config);
+    void Init(std::string model_dir, PaddleInferenceConfig &config);
 
     void Infer(std::vector<DateBlob>> &inputs, std::vector<DateBlob> *outputs);
   private:
@@ -32,3 +34,5 @@ class PaddleInferenceEngine{
 
 
 };
+
+}

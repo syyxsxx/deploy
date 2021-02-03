@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     detpostprocess.Init(parser);
     //engine init
     Deploy::PaddleInferenceEngine ppi_engine;
-    Deploy::PpiConfig ppi_config;
+    Deploy::PaddleInferenceConfig ppi_config;
     ppi_engine.Init(FLAGS_model_dir, ppi_config);
     if (FLAGS_image_list != "") {
         //img_list
@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
         //read image
         std::vector<cv::Mat> imgs;
         cv::Mat img;
-        img = cv::imread(FLAGS_cfg_image);
+        img = cv::imread(FLAGS_image);
         imgs.push_back(std::move(img));
         //create inpus and shape_traces
         std::vector<Deploy::ShapeInfo> shape_traces;
@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
         //preprocess 
         detpreprocess.Run(imgs, &inputs, &shape_traces);
         //infer
-        std::vector<Deploy::Datablob> outputs;
+        std::vector<Deploy::DataBlob> outputs;
         ppi_engine.Infer(inputs, &outputs);
         //postprocess
         std::vector<Deploy::PpDetResult> detresults;

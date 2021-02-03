@@ -18,7 +18,7 @@
 
 namespace Deploy {
 
-
+template <class T>
 struct Mask {
   // raw data of mask
   std::vector<T> data;
@@ -56,6 +56,7 @@ class PpDetPostProc {
         bool Run(const std::vector<DataBlob> &outputs, std::vector<ShapeInfo> &shape_traces, std::vector<PpDetResult> det_results);
     private:
         std::string model_arch_;
-}
+        std::map<int, std::string> labels_;
+};
 
 }

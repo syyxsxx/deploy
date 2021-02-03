@@ -79,9 +79,9 @@ bool ResizeByShort::Shape_infer(ShapeInfo* shape_trace) {
     std::vector<int> before_shape = shape_trace->shape.back();
     shape_trace->transform_order.push_back("ResizelsByShort");
     float scale = GenerateScale(before_shape[0], before_shape[1]);
-    int width = static_cast<int>(round(scale * im->cols));
-    int height = static_cast<int>(round(scale * im->rows));
-    std::vector<int> after_shape = {width, height}
+    int width = static_cast<int>(round(scale * before_shape[0]));
+    int height = static_cast<int>(round(scale * before_shape[1]));
+    std::vector<int> after_shape = {width, height};
     shape_trace->shape.push_back(after_shape);
     return true;
 }
@@ -158,7 +158,7 @@ bool CenterCrop::Run(cv::Mat* im) {
 bool CenterCrop::Shape_infer(ShapeInfo* shape_trace) {
     std::vector<int> before_shape = shape_trace->shape.back();
     shape_trace->transform_order.push_back("CenterCrop");
-    std::vector<int> after_shape = {width_, height_}
+    std::vector<int> after_shape = {width_, height_};
     shape_trace->shape.push_back(after_shape);
     return true;
 }
@@ -213,7 +213,7 @@ bool Padding::Run(cv::Mat* im) {
   if (width_ > 1 & height_ > 1) {
     padding_w = width_ - im->cols;
     padding_h = height_ - im->rows;
-  } else if (coarsest_stride_ >= 1) {
+  } else if (stride_ >= 1) {
     int h = im->rows;
     int w = im->cols;
     padding_h =
@@ -285,7 +285,7 @@ bool RGB2BGR::Run(cv::Mat* im) {
 }
 
 bool RGB2BGR::Shape_infer(ShapeInfo* shape_trace) {
-    std::vector<int> before_shape = Get_before_shape(*shape);
+    std::vector<int> before_shape = shape_trace->shape.back();
     shape_trace->transform_order.push_back("RGB2BGR");
     shape_trace->shape.push_back(before_shape);
     return true;
@@ -295,7 +295,7 @@ bool Permute::Run(cv::Mat* im) {
   int rh = im->rows;
   int rw = im->cols;
   int rc = im->channels();
-  float data = im.data;
+  float data = im->data;
   for (int i = 0; i < rc; ++i) {
     cv::extractChannel(*im, cv::Mat(rh, rw, CV_32FC1, data + i * rh * rw), i);
   }

@@ -23,6 +23,8 @@
 #include "include/deploy/common/transforms.h"
 #include "include/deploy/common/config.h" 
 
+namespace Deploy {
+
 class BasePreprocess {
   public:
     BasePreprocess() {}
@@ -41,4 +43,6 @@ class BasePreprocess {
 
   private:
     std::shared_ptr<Transform> CreateTransform(const std::string &name);
-}
+};
+
+}//namespace
