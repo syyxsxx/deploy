@@ -64,7 +64,7 @@ class Normalize : public Transform {
     std::vector<float> std_;
     std::vector<float> min_val_;
     std::vector<float> max_val_;
-}
+};
 
 /*interp_: std::vector<int> interpolations = {
   cv::INTER_LINEAR, 

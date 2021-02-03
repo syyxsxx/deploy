@@ -38,7 +38,7 @@ void PaddleInferenceEngine::Init(std::string model_dir, PaddleInferenceConfig &e
         config.SwitchIrOptim(engine_config.use_ir_optim);
     #endif
     config.EnableMemoryOptim();
-    if (use_trt && use_gpu) {
+    if (engine_config.use_trt && engine_config.use_gpu) {
         if (engine_config.precision == 0) {
             paddle::AnalysisConfig::Precision precision = paddle::AnalysisConfig::Precision::kFloat32;
         }
@@ -46,7 +46,7 @@ void PaddleInferenceEngine::Init(std::string model_dir, PaddleInferenceConfig &e
             paddle::AnalysisConfig::Precision precision = paddle::AnalysisConfig::Precision::kHalf;
         }
         else if(engine_config.precision == 2) {
-            paddle::AnalysisConfig::Precision precision = paddle::AnalysisConfig::Precision::Int8;
+            paddle::AnalysisConfig::Precision precision = paddle::AnalysisConfig::Precision::kInt8;
         }
         else {
             std::cerr << "Can not support the set precision, pealse set engine_config.precision == 0,1,2" << std::endl;
@@ -85,7 +85,7 @@ void PaddleInferenceEngine::Infer(std::vector<DataBlob> &inputs, std::vector<Dat
 
     //output
     auto output_names = predictor_->GetOutputNames();
-    for (output_name : output_names){
+    for (const auto output_name : output_names) {
         auto output_tensor = predictor_->GetOutputTensor(output_name);
         auto output_tensor_shape = output_tensor->shape();
         DateBlob output;

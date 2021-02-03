@@ -32,6 +32,9 @@ struct PaddleInferenceConfig
     //Enable IR optimization
     bool use_ir_optim = true;
 
+    // Whether to use TensorRT
+    bool use_trt = false;
+
     //Set batchsize
     int batch_size = 1;
 
