@@ -16,18 +16,18 @@
 
 namespace Deploy {
 
-void PpDetPostProc::Init(const ConfigParser &parser) {
+void PaddleDetPostProc::Init(const ConfigParser &parser) {
     model_arch_ = parser.Get<std::string>("model_name");
     labels_.clear();
     int i = 0;
-    for (auto &item : parser.Get<std::string>("labels") ) {
+    for (auto item : parser.Get<std::string>("labels") ) {
         std::string label = item;
         labels_[i] = label;
         i++;
     }
 }
 
-bool PpDetPostProc::Run(const std::vector<DataBlob> &outputs, const std::vector<ShapeInfo> &shape_traces, std::vector<PpDetResult> *det_results) {
+bool PaddleDetPostProc::Run(const std::vector<DataBlob> &outputs, const std::vector<ShapeInfo> &shape_traces, std::vector<PpDetResult> *det_results) {
     det_results->clear();
     DataBlob output_blob = outputs[0];
     float *output_data = (float*)output_blob.data;
@@ -42,10 +42,11 @@ bool PpDetPostProc::Run(const std::vector<DataBlob> &outputs, const std::vector<
             rh =  shape_traces[i].shape[0][1];
             rw =  shape_traces[i].shape[0][0];
         }
+        PpDetResult det_result;
         for (int j = lod_vector[0][i]; j < lod_vector[0][i + 1]; ++j) {
             Box box;
-            box.category_id = static_cast<int>(round(output_box[j * 6]));
-            box.category = labels[box.category_id];
+            box.category_id = static_cast<int>(round(output_data[j * 6]));
+            box.category = labels_[box.category_id];
             box.score = output_data[1 + j * 6];
             int xmin = (output_data[2 + j * 6] * rw);
             int ymin = (output_data[3 + j * 6] * rh);
@@ -54,8 +55,9 @@ bool PpDetPostProc::Run(const std::vector<DataBlob> &outputs, const std::vector<
             int wd = xmax - xmin;
             int hd = ymax - ymin;
             box.coordinate = {xmin, ymin, wd, hd};
-            results->boxes.push_back(std::move(box));
+            det_result.boxes.push_back(std::move(box));
         }
+        det_results->push_back(std::move(det_result));
     }
 }
 

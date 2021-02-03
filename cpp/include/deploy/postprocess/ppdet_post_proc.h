@@ -50,7 +50,7 @@ struct PpDetResult {
   }
 };
 
-class PpDetPostProc {
+class PaddleDetPostProc {
     public:
         void Init(const ConfigParser &parser);
         bool Run(const std::vector<DataBlob> &outputs, const std::vector<ShapeInfo> &shape_traces, std::vector<PpDetResult> *det_results);

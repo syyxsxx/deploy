@@ -47,10 +47,10 @@ int main(int argc, char** argv) {
 
     // data preprocess
     // preprocess init
-    Deploy::DetPreprocess detpreprocess;
+    Deploy::PaddleDetPreProc detpreprocess;
     detpreprocess.Init(parser);
     // postprocess init
-    Deploy::DetPostprocess detpostprocess;
+    Deploy::PaddleDetPostProc detpostprocess;
     detpostprocess.Init(parser);
     //engine init
     Deploy::PaddleInferenceEngine ppi_engine;

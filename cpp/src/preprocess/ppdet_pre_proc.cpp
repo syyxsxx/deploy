@@ -18,13 +18,13 @@
 
 namespace Deploy {
 
-bool DetProecess::Init(const ConfigParser &parser) {
+bool PaddleDetPreProc::Init(const ConfigParser &parser) {
     BuildTransform(parser);
     model_arch_ = parser.Get<std::string>("model_name")
 }
 
-bool DetProecess::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *inputs, std::vector<ShapeInfo> *shape_traces) {
-    inputs.clear();
+bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *inputs, std::vector<ShapeInfo> *shape_traces) {
+    inputs->clear();
     int batchsize = imgs.size();
     DataBlob img_blob;
     DataBlob im_size_blob;
@@ -33,7 +33,7 @@ bool DetProecess::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *i
         cv::Mat im = imgs[i].clone();
         //origin img shape(w,h)
         std::vector<int> size = {im.cols, im.rows};
-        im_shape.transform_order.push_back("Origin")
+        im_shape.transform_order.push_back("Origin");
         im_shape.shape.push_back(size);
         for (int j=0; j < transforms.size(); j++) {
             if (!transforms[j]->Run(&im)) {
@@ -48,23 +48,22 @@ bool DetProecess::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *i
         shape_traces->push_back(std::move(im_shape));
         std::vector<DataBlob> input;
         // img data for input
-        img_blob.name = "image";
-        std::vector<int> input_shape = im_shape.shape[im_shape.tranform_order.back()];
-        img_blob.shape = {batchsize, 3, input_shape[1], input_shape[0]}
-        img_blob.dtype = 0;
-        int input_size = input_shape[0] * input_shape[1];
+        int input_size = input_shape[0] * input_shape[1] * 3;
         memrcy(img_blob.data + i * input_shape * sizeof(float) , im.data, input_size * sizeof(float));
         // Additional information for input
         if (model_arch_ == "YOLO") {
-            DataBlob im_size_blob;
-            im_size_blob.name = "im_size"
-            im_size_blob.shape = {batchsize, 2}
-            im_size_blob.dtype = 2;
             memrcy(im_size_blob.data + i * 2 * sizeof(int), size.data(), 2 * sizeof(int));
         }
     }
+    std::vector<int> input_shape = (*shape_traces)[0].back();
+    img_blob.shape = {batchsize, 3, input_shape[1], input_shape[0]}
+    img_blob.dtype = 0;
+    img_blob.name = "image";
     inputs->push_back(std::move(img_blob));
     if (model_arch_ == "YOLO") {
+        im_size_blob.name = "im_size";
+        im_size_blob.shape = {batchsize, 2};
+        im_size_blob.dtype = 2;
         inputs->push_back(std::move(im_size_blob));
     }
 }
