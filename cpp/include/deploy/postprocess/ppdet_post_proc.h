@@ -20,6 +20,7 @@ namespace Deploy {
 
 template <class T>
 struct Mask {
+  std::string category;
   // raw data of mask
   std::vector<T> data;
   // the shape of mask
@@ -38,7 +39,6 @@ struct Box {
   // confidence score
   float score;
   std::vector<float> coordinate;
-  Mask<int> mask;
 };
 
 struct PpDetResult {

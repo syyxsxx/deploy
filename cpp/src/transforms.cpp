@@ -23,25 +23,28 @@
 
 namespace Deploy {
 
-bool Normalize::Run(cv::Mat* im) {
-    
-    std::vector<float> range_val;
-    for (int c = 0; c < im->channels(); c++) {
-        range_val.push_back(max_val_[c] - min_val_[c]);
-    }
-    std::vector<cv::Mat> split_im;
-    cv::split(*im, split_im);
-    for (int c = 0; c < im->channels(); c++) {
-        cv::subtract(split_im[c], cv::Scalar(min_val_[c]), split_im[c]);
-        if (is_scale_){
-            float range_val = max_val_[c] - min_val_[c];
-            cv::divide(split_im[c], cv::Scalar(range_val), split_im[c]);
+bool Normalize::Run(std::vector<cv::Mat> *ims) {
+    int batch = ims->size();
+    for (int i = 0; i < batch; i++) {
+        std::vector<float> range_val;
+        for (int c = 0; c < im->channels(); c++) {
+            range_val.push_back(max_val_[c] - min_val_[c]);
         }
-        cv::subtract(split_im[c], cv::Scalar(mean_[c]), split_im[c]);
-        cv::divide(split_im[c], cv::Scalar(std_[c]), split_im[c]);
+        std::vector<cv::Mat> split_im;
+        cv::split((*ims)[i], split_im);
+        for (int c = 0; c < im->channels(); c++) {
+            cv::subtract(split_im[c], cv::Scalar(min_val_[c]), split_im[c]);
+            if (is_scale_){
+                float range_val = max_val_[c] - min_val_[c];
+                cv::divide(split_im[c], cv::Scalar(range_val), split_im[c]);
+            }
+            cv::subtract(split_im[c], cv::Scalar(mean_[c]), split_im[c]);
+            cv::divide(split_im[c], cv::Scalar(std_[c]), split_im[c]);
+        }
+        cv::merge(split_im, (*ims)[i]);
     }
-    cv::merge(split_im, *im);
     return true;
+
 }
 
 bool Normalize::Shape_infer(ShapeInfo* shape_trace) {
@@ -65,13 +68,16 @@ float ResizeByShort::GenerateScale(const int origin_w, const int origin_h) {
   return scale;
 }
 
-bool ResizeByShort::Run(cv::Mat* im) {
-    int origin_w = im->cols;
-    int origin_h = im->rows;
-    float scale = GenerateScale(origin_w, origin_h);
-    int width = static_cast<int>(round(scale * im->cols));
-    int height = static_cast<int>(round(scale * im->rows));
-    cv::resize(*im, *im, cv::Size(width, height), 0, 0, interp_);
+bool ResizeByShort::Run(std::vector<cv::Mat> *ims) {
+    int batch = ims->size();
+    for (int i = 0; i < batch; i++) {
+      int origin_w = im->cols;
+      int origin_h = im->rows;
+      float scale = GenerateScale(origin_w, origin_h);
+      int width = static_cast<int>(round(scale * im->cols));
+      int height = static_cast<int>(round(scale * im->rows));
+      cv::resize((*ims)[i], (*ims)[i], cv::Size(width, height), 0, 0, interp_);
+    }
     return true;
 }
 
@@ -100,13 +106,16 @@ float ResizeByLong::GenerateScale(const int origin_w, const int origin_h) {
 }
 
 
-bool ResizeByLong::Run(cv::Mat* im) {
-    int origin_w = im->cols;
-    int origin_h = im->rows;
-    float scale = GenerateScale(origin_w, origin_h);
-    int width = static_cast<int>(round(scale * im->cols));
-    int height = static_cast<int>(round(scale * im->rows));
-    cv::resize(*im, *im, cv::Size(width, height), 0, 0, interp_);
+bool ResizeByLong::Run(std::vector<cv::Mat> *ims) {
+    int batch = ims->size();
+    for (int i = 0; i < batch; i++) {
+        int origin_w = im->cols;
+        int origin_h = im->rows;
+        float scale = GenerateScale(origin_w, origin_h);
+        int width = static_cast<int>(round(scale * im->cols));
+        int height = static_cast<int>(round(scale * im->rows));
+        cv::resize((*ims)[i], (*ims)[i], cv::Size(width, height), 0, 0, interp_);
+    }
     return true;
 }
 
@@ -122,14 +131,17 @@ bool ResizeByLong::Shape_infer(ShapeInfo* shape_trace) {
 }
 
 
-bool Resize::Run(cv::Mat* im) {
-  if (width_ <= 0 || height_ <= 0) {
-    std::cerr << "[Resize] width and height should be greater than 0"
-              << std::endl;
-    return false;
+bool Resize::Run(std::vector<cv::Mat> *ims) {
+  int batch = ims->size();
+  for (int i = 0; i < batch; i++) {
+      if (width_ <= 0 || height_ <= 0) {
+        std::cerr << "[Resize] width and height should be greater than 0"
+                  << std::endl;
+        return false;
+      }
+      cv::resize(
+          (*ims)[i], (*ims)[i], cv::Size(width_, height_), 0, 0, interp_);
   }
-  cv::resize(
-      *im, *im, cv::Size(width_, height_), 0, 0, interp_);
   return true;
 }
 
@@ -141,17 +153,20 @@ bool Resize::Shape_infer(ShapeInfo* shape_trace) {
     return true;
 }
 
-bool CenterCrop::Run(cv::Mat* im) {
-    int height = static_cast<int>(im->rows);
-    int width = static_cast<int>(im->cols);
-    if (height < height_ || width < width_) {
-        std::cerr << "[CenterCrop] Image size less than crop size" << std::endl;
-        return false;
+bool CenterCrop::Run(std::vector<cv::Mat> *ims) {
+    int batch = ims->size();
+    for (int i = 0; i < batch; i++) {
+        int height = static_cast<int>(im->rows);
+        int width = static_cast<int>(im->cols);
+        if (height < height_ || width < width_) {
+            std::cerr << "[CenterCrop] Image size less than crop size" << std::endl;
+            return false;
+        }
+        int offset_x = static_cast<int>((width - width_) / 2);
+        int offset_y = static_cast<int>((height - height_) / 2);
+        cv::Rect crop_roi(offset_x, offset_y, width_, height_);
+        (*ims)[i] = ((*ims)[i])(crop_roi);
     }
-    int offset_x = static_cast<int>((width - width_) / 2);
-    int offset_y = static_cast<int>((height - height_) / 2);
-    cv::Rect crop_roi(offset_x, offset_y, width_, height_);
-    *im = (*im)(crop_roi);
     return true;
 }
 
@@ -206,36 +221,61 @@ void Padding::MultichannelPadding(cv::Mat* im,
   *im = padded_im;
 }
 
-bool Padding::Run(cv::Mat* im) {
+bool Padding::Run(std::vector<cv::Mat> *ims) {
+  int batch = ims->size();
+  for (int i = 0; i < batch; i++) {
+      int padding_w = 0;
+      int padding_h = 0;
+      if (width_ > 1 & height_ > 1) {
+          padding_w = width_ - im->cols;
+          padding_h = height_ - im->rows;
+      } else if (stride_ >= 1) {
+          int h = im->rows;
+          int w = im->cols;
+          padding_h =
+              ceil(h * 1.0 / stride_) * stride_ - im->rows;
+          padding_w =
+              ceil(w * 1.0 / stride_) * stride_ - im->cols;
+      }
 
-  int padding_w = 0;
-  int padding_h = 0;
-  if (width_ > 1 & height_ > 1) {
-    padding_w = width_ - im->cols;
-    padding_h = height_ - im->rows;
-  } else if (stride_ >= 1) {
-    int h = im->rows;
-    int w = im->cols;
-    padding_h =
-        ceil(h * 1.0 / stride_) * stride_ - im->rows;
-    padding_w =
-        ceil(w * 1.0 / stride_) * stride_ - im->cols;
+      if (padding_h < 0 || padding_w < 0) {
+          std::cerr << "[Padding] Computed padding_h=" << padding_h
+                    << ", padding_w=" << padding_w
+                    << ", but they should be greater than 0." << std::endl;
+          return false;
+      }
+      if (im->channels() < 5) {
+          Padding::GeneralPadding(&(*ims)[i], im_value_, padding_w, padding_h);
+      } else {
+          Padding::MultichannelPadding(&(*ims)[i], im_value_, padding_w, padding_h);
+      }
   }
-
-  if (padding_h < 0 || padding_w < 0) {
-    std::cerr << "[Padding] Computed padding_h=" << padding_h
-              << ", padding_w=" << padding_w
-              << ", but they should be greater than 0." << std::endl;
-    return false;
-  }
-  if (im->channels() < 5) {
-    Padding::GeneralPadding(im, im_value_, padding_w, padding_h);
-  } else {
-    Padding::MultichannelPadding(im, im_value_, padding_w, padding_h);
-  }
-
   return true;
 }
+
+bool Padding::Run(std::vector<cv::Mat> *ims, int max_w, int max_h) {
+    int batch = ims->size();
+    for (int i = 0; i < batch; i++) {
+        int padding_w = 0;
+        int padding_h = 0;
+        if ((max_w - (*ims)[i].cols) > 0 || (max_h - (*ims)[i].rows) > 0) {
+            padding_w = max_w - (*ims)[i].cols;
+            padding_h = max_h - (*ims)[i].rows;
+            value = cv::Scalar(0, 0, 0);
+            cv::copyMakeBorder(
+              (*ims)[i],
+              (*ims)[i],
+              0,
+              padding_h,
+              0,
+              padding_w,
+              cv::BORDER_CONSTANT,
+              value);
+        }
+    }
+    return true;
+}
+      
 
 bool Padding::Shape_infer(ShapeInfo* shape_trace) {
     std::vector<int> before_shape = shape_trace->shape.back();
@@ -245,19 +285,22 @@ bool Padding::Shape_infer(ShapeInfo* shape_trace) {
     return true;
 }
 
-bool Clip::Run(cv::Mat* im) {
-  std::vector<cv::Mat> split_im;
-  cv::split(*im, split_im);
-  for (int c = 0; c < im->channels(); c++) {
-    cv::threshold(split_im[c], split_im[c], max_val_[c], max_val_[c],
-                  cv::THRESH_TRUNC);
-    cv::subtract(cv::Scalar(0), split_im[c], split_im[c]);
-    cv::threshold(split_im[c], split_im[c], min_val_[c], min_val_[c],
-                  cv::THRESH_TRUNC);
-    cv::divide(split_im[c], cv::Scalar(-1), split_im[c]);
-  }
-  cv::merge(split_im, *im);
-  return true;
+bool Clip::Run(std::vector<cv::Mat> *ims) {
+    int batch = ims->size();
+    for (int i = 0; i < batch; i++) {
+        std::vector<cv::Mat> split_im;
+        cv::split((*ims)[i], split_im);
+        for (int c = 0; c < im->channels(); c++) {
+          cv::threshold(split_im[c], split_im[c], max_val_[c], max_val_[c],
+                        cv::THRESH_TRUNC);
+          cv::subtract(cv::Scalar(0), split_im[c], split_im[c]);
+          cv::threshold(split_im[c], split_im[c], min_val_[c], min_val_[c],
+                        cv::THRESH_TRUNC);
+          cv::divide(split_im[c], cv::Scalar(-1), split_im[c]);
+        }
+        cv::merge(split_im, (*ims)[i]);
+    }
+    return true;
 }
 
 bool Clip::Shape_infer(ShapeInfo* shape_trace) {
@@ -267,8 +310,11 @@ bool Clip::Shape_infer(ShapeInfo* shape_trace) {
     return true;
 }
 
-bool BGR2RGB::Run(cv::Mat* im) {
-    cv::cvtColor(*im, *im, cv::COLOR_BGR2RGB);
+bool BGR2RGB::Run(std::vector<cv::Mat> *ims) {
+    int batch = ims->size();
+    for (int i = 0; i < batch; i++) {
+        cv::cvtColor(*ims[i], *ims[i], cv::COLOR_BGR2RGB);
+    }
     return true;
 }
 
@@ -279,8 +325,11 @@ bool BGR2RGB::Shape_infer(ShapeInfo* shape_trace) {
     return true;
 }
 
-bool RGB2BGR::Run(cv::Mat* im) {
-    cv::cvtColor(*im, *im, cv::COLOR_RGB2BGR);
+bool RGB2BGR::Run(std::vector<cv::Mat> *ims) {
+    int batch = ims->size();
+    for (int i = 0; i < batch; i++) {
+        cv::cvtColor((*ims)[i], (*ims)[i], cv::COLOR_RGB2BGR);
+    }
     return true;
 }
 
@@ -291,14 +340,16 @@ bool RGB2BGR::Shape_infer(ShapeInfo* shape_trace) {
     return true;
 }
 
-bool Permute::Run(cv::Mat* im) {
-  int rh = im->rows;
-  int rw = im->cols;
-  int rc = im->channels();
-  float *data = (float*)im->data;
-  for (int i = 0; i < rc; ++i) {
-    cv::extractChannel(*im, cv::Mat(rh, rw, CV_32FC1, data + i * rh * rw), i);
-  }
+bool Permute::Run(std::vector<cv::Mat> *ims) {
+  int batch = ims->size();
+  for (int i = 0; i < batch; i++) {
+      int rh = (*ims)[i].rows;
+      int rw = (*ims)[i]->cols;
+      int rc = (*ims)[i].channels();
+      float *data = (float*)((*ims)[i]).data;
+      for (int j = 0; j < rc; ++j) {
+          cv::extractChannel((*ims)[i], cv::Mat(rh, rw, CV_32FC1, data + j * rh * rw), j);
+      }
   return true;
 }
 

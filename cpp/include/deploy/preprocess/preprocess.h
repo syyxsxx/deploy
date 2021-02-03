@@ -34,12 +34,21 @@ class BasePreprocess {
 
   protected:
 
-    bool BuildTransform(const ConfigParser &parser); 
+    bool BuildTransform(const ConfigParser &parser);
+
+    bool RunTransform(std::vector<cv::Mat> *imgs);
+
+    bool ShapeInfer (std::vector<ShapeInfo> *shape_traces);
     
     std::vector<std::shared_ptr<Transform>> transforms;
 
+    std::vector<int> GetMaxSize();
+
   private:
+    int max_w_ = 0;
+    int max_h_ = 0;
     std::shared_ptr<Transform> CreateTransform(const std::string &name);
+
 };
 
 }//namespace

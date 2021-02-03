@@ -25,38 +25,30 @@ bool PaddleDetPreProc::Init(const ConfigParser &parser) {
 
 bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *inputs, std::vector<ShapeInfo> *shape_traces) {
     inputs->clear();
+    shape_traces->clear();
     int batchsize = imgs.size();
+    shape_traces.resize(batchsize);
     DataBlob img_blob;
     DataBlob im_size_blob;
+    ShapeInfer(shape_traces);
+    std::vector<int> max_shape = GetMaxSize();
+    std::vector<cv::Mat> image;
+    image.assign(imgs.begin(), imgs.end());
+    if (!RunTransform(&image)) {
+        std::cerr << "Apply transforms to image failed!" << std::endl;
+        return false;
+    }
     for (int i=0; i < batchsize; i++) {
-        ShapeInfo im_shape;
-        cv::Mat im = imgs[i].clone();
-        //origin img shape(w,h)
-        std::vector<int> size = {im.cols, im.rows};
-        im_shape.transform_order.push_back("Origin");
-        im_shape.shape.push_back(size);
-        for (int j=0; j < transforms.size(); j++) {
-            if (!transforms[j]->Run(&im)) {
-                std::cerr << "Apply transforms to image failed!" << std::endl;
-                return false;
-            }
-            if (!transforms[j]->Shape_infer(&im_shape)) {
-                std::cerr << "Apply shape inference failed!" << std::endl;
-                return false;
-            }
-        }
-        shape_traces->push_back(std::move(im_shape));
-        std::vector<DataBlob> input;
         // img data for input
-        int input_size = input_shape[0] * input_shape[1] * 3;
-        memcpy(img_blob.data + i * input_shape * sizeof(float) , im.data, input_size * sizeof(float));
+        std::vector<int> origin_size = {(*shape_traces)[i].shape[0][1], (*shape_traces)[i].shape[0][0]};
+        int input_size = max_shape[0] * max_shape[1] * 3;
+        memcpy(img_blob.data + i * input_shape * sizeof(float) , image[i].data, input_size * sizeof(float));
         // Additional information for input
         if (model_arch_ == "YOLO") {
-            memcpy(im_size_blob.data + i * 2 * sizeof(int), size.data(), 2 * sizeof(int));
+            memcpy(im_size_blob.data + i * 2 * sizeof(int), origin_size.data(), 2 * sizeof(int));
         }
     }
-    std::vector<int> input_shape = (*shape_traces)[0].back();
-    img_blob.shape = {batchsize, 3, input_shape[1], input_shape[0]};
+    img_blob.shape = {batchsize, 3, max_shape[1], max_shape[0]};
     img_blob.dtype = 0;
     img_blob.name = "image";
     inputs->push_back(std::move(img_blob));

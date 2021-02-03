@@ -18,13 +18,58 @@ namespace Deploy {
 
 bool BasePreprocess::BuildTransform(const ConfigParser &parser) {
     transforms.clear();
-    transforms_node = parser.GetTransforms();
+    auto transforms_node = parser.GetTransforms();
     for (const auto& node : transforms_node) {
         std::string name = node.begin()->first.as<std::string>();
         std::shared_ptr<Transform> transform = CreateTransform(name);
         transform->Init(node.begin()->second);
         transforms.push_back(transform);
     }
+}
+
+bool BasePreprocess::RunTransform(std::vector<cv::Mat> *imgs) {
+    for (int i=0; j < transforms.size(); i++) {
+        if (!transforms[j]->Run(imgs)) {
+            std::cerr << "Run transforms to image failed!" << std::endl;
+            return false;
+        }
+    }
+    Padding batch_padding;
+    batch_padding.Run(imgs, max_w_, max_h_);
+    return true;
+}
+
+bool BasePreprocess::ShapeInfer(const std::vector<cv::Mat> &imgs, std::vector<ShapeInfo> *shape_traces) {
+    int batchsize = imgs.size();
+    for (int i = 0; i < batchsize; i++) {
+        ShapeInfo im_shape;
+        std::vector<int> origin_size = {imgs[i].cols, imgs[i].rows};
+        im_shape.transform_order.push_back("Origin");
+        im_shape.shape.push_back(origin_size);
+        if (!transforms[i]->Shape_infer(&im_shape)) {
+            std::cerr << "Apply shape inference failed!" << std::endl;
+            return false;
+        }
+        std::vector<int> final_shape = im_shape.shape.back();
+        if (final_shape[0] > max_w_) {
+            max_w_ = final_shape[0];
+        }
+        if (final_shape[1] > max_h_) {
+            max_h_ = final_shape[1];
+        }
+        shape_traces->push_back(std::move(im_shape));
+    }
+    for (int i = 0; i < batchsize; i++) {
+        std::vector<int> max_shape;
+        (*shape_traces)[0].shape.push_back(std::move(max_shape));
+        (*shape_traces)[0].transform_order.push_back("Padding");
+    }
+    return true
+}
+
+std::vector<int> BasePreprocess::GetMaxSize() {
+    std::vector max_shape = {max_w_, max_h_};
+    return max_shape;
 }
 
 std::shared_ptr<Transform> BasePreprocess::CreateTransform(

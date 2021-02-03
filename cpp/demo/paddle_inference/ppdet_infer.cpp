@@ -74,6 +74,6 @@ int main(int argc, char** argv) {
         ppi_engine.Infer(inputs, &outputs);
         //postprocess
         std::vector<Deploy::PpDetResult> detresults;
-        detpostprocess.Run(detresults, shape_traces, &detresults);
+        detpostprocess.Run(outputsw, shape_traces, &detresults);
     }
 }
