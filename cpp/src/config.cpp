@@ -22,7 +22,7 @@ namespace Deploy {
 
 bool ConfigParser::Load(const std::string &cfg_file, const std::string &pp_type) {
     //Load config as a YAML::Node
-    config = YAML::LoadFile(cfg_file);
+    YAML::Node config = YAML::LoadFile(cfg_file);
     //Parser yaml file
     if (pp_type == 'det') {
         if(!DetParser(config)) {

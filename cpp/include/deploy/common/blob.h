@@ -42,7 +42,7 @@ class DataBlob{
     //LoD信息
     std::vector<std::vector<size_t>> lod;
 
-}
+};
 
 class ShapeInfo{
   public:
@@ -53,6 +53,6 @@ class ShapeInfo{
     // transform order
     std::vector<std::string> transform_order;
    
-}
+};
 
 }//namespace

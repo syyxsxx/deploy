@@ -17,6 +17,7 @@
 #include "yaml-cpp/yaml.h"
 #include "include/deploy/common/config.h"
 #include "include/deploy/common/blob.h"
+#include "include/deploy/engine/engine_config.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -31,6 +32,7 @@ DEFINE_string(image_list, "", "Path of test image list file");
 DEFINE_bool(use_gpu, false, "Infering with GPU or CPU");
 DEFINE_int32(gpu_id, 0, "GPU card id");
 DEFINE_int32(batch_size, 1, "Batch size of infering");
+DEFINE_string(pptype, "", "Type of PaddleToolKit");
 
 
 int main(int argc, char** argv) {
@@ -38,14 +40,14 @@ int main(int argc, char** argv) {
     google::ParseCommandLineFlags(&argc, &argv, true);
     //parser yaml file
     Deploy::ConfigParser parser;
-    parser.Load(FLAGS_cfg_file);
+    parser.Load(FLAGS_cfg_file, pptype);
 
     // data preprocess
     // preprocess init
     Deploy::DetPreprocess detpreprocess;
     detpreprocess.Init(parser);
     // postprocess init
-    Deploy::DetPreprocess detpostprocess;
+    Deploy::DetPostprocess detpostprocess;
     detpostprocess.Init(parser);
     //engine init
     Deploy::PaddleInferenceEngine ppi_engine;
@@ -55,8 +57,8 @@ int main(int argc, char** argv) {
         //img_list
     } else {
         //read image
-        std::vector<cv::mat> imgs;
-        cv::mat img;
+        std::vector<cv::Mat> imgs;
+        cv::Mat img;
         img = cv::imread(FLAGS_cfg_image);
         imgs.push_back(std::move(img));
         //create inpus and shape_traces

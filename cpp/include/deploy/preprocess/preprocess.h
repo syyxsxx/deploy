@@ -19,7 +19,7 @@
 #include <string>
 
 #include "include/deploy/common/blob.h"
-#include "include/deploy/common/transform.h"
+#include "include/deploy/common/transforms.h"
 #include "include/deploy/common/config.h" 
 
 class BasePreprocess {

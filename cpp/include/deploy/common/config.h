@@ -47,6 +47,6 @@ class ConfigParser {
     bool DetParserTransforms(const YAML::Node &preprocess_op);
 
     YAML::Node config_;
-}
+};
 
 }//namespace

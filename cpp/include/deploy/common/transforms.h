@@ -21,6 +21,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "blob.h"
+#include "yaml-cpp/yaml.h"
 
 namespace Deploy {
 
@@ -150,7 +151,7 @@ class BGR2RGB : public Transform {
     }
     virtual bool Run(cv::Mat* im);
     virtual bool Shape_infer(ShapeInfo* shape);
-}
+};
 
 class RGB2BGR : public Transform {
   public:
@@ -158,7 +159,7 @@ class RGB2BGR : public Transform {
     }
     virtual bool Run(cv::Mat* im);
     virtual bool Shape_infer(ShapeInfo* shape);
-}
+};
 
 class Padding : public Transform {
  public:

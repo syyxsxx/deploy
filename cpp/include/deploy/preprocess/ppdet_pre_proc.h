@@ -37,6 +37,6 @@ class DetProecess : pubulic BasePreprocess {
     private:
         std::string model_arch_;
     
-}
+};
 
 }//namespace
