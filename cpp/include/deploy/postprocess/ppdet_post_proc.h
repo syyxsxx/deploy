@@ -59,4 +59,4 @@ class PpDetPostProc {
         std::map<int, std::string> labels_;
 };
 
-}
+}//namespace

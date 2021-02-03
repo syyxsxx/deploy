@@ -24,7 +24,7 @@
 
 namespace Deploy {
 
-class DetProecess : pubulic BasePreprocess {
+class DetProecess : public BasePreprocess {
     public:
         virtual bool Init(const ConfigParser &parser);
 

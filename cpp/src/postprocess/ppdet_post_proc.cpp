@@ -20,9 +20,9 @@ void PpDetPostProc::Init(const ConfigParser &parser) {
     model_arch_ = parser.Get<std::string>("model_name");
     labels_.clear();
     int i = 0;
-    for (auto item : parser.Get<std::string>("labels") ) {
+    for (auto &item : parser.Get<std::string>("labels") ) {
         std::string label = item;
-        labels[i] = label;
+        labels_[i] = label;
         i++;
     }
 }
@@ -31,10 +31,10 @@ bool PpDetPostProc::Run(const std::vector<DataBlob> &outputs, const std::vector<
     det_results->clear();
     DataBlob output_blob = outputs[0];
     float *output_data = (float*)output_blob.data;
-    auto lod_data = output_blob.lod;
+    auto lod_vector = output_blob.lod;
     int batchsize = shape_traces.size();
     //box postprocess
-    det_results->resize(batchsize)
+    det_results->resize(batchsize);
     for (int i = 0; i < lod_vector[0].size() - 1; ++i) {
         int rh = 1;
         int rw = 1;
