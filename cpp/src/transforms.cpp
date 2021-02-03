@@ -157,7 +157,7 @@ bool CenterCrop::Run(std::vector<cv::Mat> *ims) {
     int batch = ims->size();
     for (int i = 0; i < batch; i++) {
         int height = static_cast<int>((*ims)[i].rows);
-        int width = static_cast<int>((*ims)[i].ols);
+        int width = static_cast<int>((*ims)[i].cols);
         if (height < height_ || width < width_) {
             std::cerr << "[CenterCrop] Image size less than crop size" << std::endl;
             return false;
@@ -344,7 +344,7 @@ bool Permute::Run(std::vector<cv::Mat> *ims) {
   int batch = ims->size();
   for (int i = 0; i < batch; i++) {
       int rh = (*ims)[i].rows;
-      int rw = (*ims)[i]->cols;
+      int rw = (*ims)[i].cols;
       int rc = (*ims)[i].channels();
       float *data = (float*)((*ims)[i]).data;
       for (int j = 0; j < rc; ++j) {

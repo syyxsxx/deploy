@@ -30,7 +30,7 @@ bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlo
     shape_traces->resize(batchsize);
     DataBlob img_blob;
     DataBlob im_size_blob;
-    ShapeInfer(shape_traces);
+    ShapeInfer(imgs, shape_traces);
     std::vector<int> max_shape = GetMaxSize();
     std::vector<cv::Mat> image;
     image.assign(imgs.begin(), imgs.end());

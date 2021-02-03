@@ -68,7 +68,7 @@ bool BasePreprocess::ShapeInfer(const std::vector<cv::Mat> &imgs, std::vector<Sh
 }
 
 std::vector<int> BasePreprocess::GetMaxSize() {
-    std::vector max_shape = {max_w_, max_h_};
+    std::vector<int> max_shape = {max_w_, max_h_};
     return max_shape;
 }
 
