@@ -313,7 +313,7 @@ bool Clip::Shape_infer(ShapeInfo* shape_trace) {
 bool BGR2RGB::Run(std::vector<cv::Mat> *ims) {
     int batch = ims->size();
     for (int i = 0; i < batch; i++) {
-        cv::cvtColor(*ims[i], *ims[i], cv::COLOR_BGR2RGB);
+        cv::cvtColor((*ims)[i], (*ims)[i], cv::COLOR_BGR2RGB);
     }
     return true;
 }
@@ -350,6 +350,7 @@ bool Permute::Run(std::vector<cv::Mat> *ims) {
       for (int j = 0; j < rc; ++j) {
           cv::extractChannel((*ims)[i], cv::Mat(rh, rw, CV_32FC1, data + j * rh * rw), j);
       }
+  }
   return true;
 }
 

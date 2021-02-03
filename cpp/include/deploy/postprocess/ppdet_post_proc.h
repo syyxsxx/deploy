@@ -41,7 +41,7 @@ struct Box {
   Mask<int> mask;
 };
 
-struct PpDetResult {
+struct PaddleDetResult {
   // target boxes
   std::vector<Box> boxes;
   int mask_resolution;
@@ -50,10 +50,10 @@ struct PpDetResult {
   }
 };
 
-class PpDetPostProc {
+class PaddleDetPostProc {
     public:
         void Init(const ConfigParser &parser);
-        bool Run(const std::vector<DataBlob> &outputs, const std::vector<ShapeInfo> &shape_traces, std::vector<PpDetResult> *det_results);
+        bool Run(const std::vector<DataBlob> &outputs, const std::vector<ShapeInfo> &shape_traces, std::vector<PaddleDetResult> *det_results);
     private:
         std::string model_arch_;
         std::map<int, std::string> labels_;

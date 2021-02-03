@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
         std::vector<Deploy::DataBlob> outputs;
         ppi_engine.Infer(inputs, &outputs);
         //postprocess
-        std::vector<Deploy::PpDetResult> detresults;
-        detpostprocess.Run(outputsw, shape_traces, &detresults);
+        std::vector<Deploy::PaddleDetResult> detresults;
+        detpostprocess.Run(outputs, shape_traces, &detresults);
     }
 }

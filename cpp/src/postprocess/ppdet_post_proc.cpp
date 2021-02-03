@@ -27,7 +27,7 @@ void PaddleDetPostProc::Init(const ConfigParser &parser) {
     }
 }
 
-bool PaddleDetPostProc::Run(const std::vector<DataBlob> &outputs, const std::vector<ShapeInfo> &shape_traces, std::vector<PpDetResult> *det_results) {
+bool PaddleDetPostProc::Run(const std::vector<DataBlob> &outputs, const std::vector<ShapeInfo> &shape_traces, std::vector<PaddleDetResult> *det_results) {
     det_results->clear();
     DataBlob output_blob = outputs[0];
     float *output_data = (float*)output_blob.data;
@@ -42,7 +42,7 @@ bool PaddleDetPostProc::Run(const std::vector<DataBlob> &outputs, const std::vec
             rh =  shape_traces[i].shape[0][1];
             rw =  shape_traces[i].shape[0][0];
         }
-        PpDetResult det_result;
+        PaddleDetResult det_result;
         for (int j = lod_vector[0][i]; j < lod_vector[0][i + 1]; ++j) {
             Box box;
             box.category_id = static_cast<int>(round(output_data[j * 6]));
