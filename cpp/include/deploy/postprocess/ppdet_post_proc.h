@@ -20,7 +20,6 @@ namespace Deploy {
 
 template <class T>
 struct Mask {
-  std::string category;
   // raw data of mask
   std::vector<T> data;
   // the shape of mask
@@ -39,6 +38,7 @@ struct Box {
   // confidence score
   float score;
   std::vector<float> coordinate;
+  Mask<int> mask;
 };
 
 struct PpDetResult {
@@ -50,7 +50,7 @@ struct PpDetResult {
   }
 };
 
-class PaddleDetPostProc {
+class PpDetPostProc {
     public:
         void Init(const ConfigParser &parser);
         bool Run(const std::vector<DataBlob> &outputs, const std::vector<ShapeInfo> &shape_traces, std::vector<PpDetResult> *det_results);
@@ -59,4 +59,4 @@ class PaddleDetPostProc {
         std::map<int, std::string> labels_;
 };
 
-}//namespace
+}//namespaces
