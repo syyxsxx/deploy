@@ -53,7 +53,7 @@ struct PpDetResult {
 class PpDetPostProc {
     public:
         void Init(const ConfigParser &parser);
-        bool Run(const std::vector<DataBlob> &outputs, std::vector<ShapeInfo> &shape_traces, std::vector<PpDetResult> det_results);
+        bool Run(const std::vector<DataBlob> &outputs, const std::vector<ShapeInfo> &shape_traces, std::vector<PpDetResult> *det_results);
     private:
         std::string model_arch_;
         std::map<int, std::string> labels_;

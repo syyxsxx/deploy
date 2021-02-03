@@ -19,7 +19,7 @@ namespace Deploy {
 void PpDetPostProc::Init(const ConfigParser &parser) {
     model_arch_ = parser.Get<std::string>("model_name");
     labels_.clear();
-    int i = 0
+    int i = 0;
     for (auto item : parser.Get<std::string>("labels") ) {
         std::string label = item;
         labels[i] = label;
@@ -27,7 +27,7 @@ void PpDetPostProc::Init(const ConfigParser &parser) {
     }
 }
 
-bool PpDetPostProc::Run(const std::vector<DataBlob> &outputs, std::vector<ShapeInfo> &shape_traces, std::vector<PpDetResult> *det_results) {
+bool PpDetPostProc::Run(const std::vector<DataBlob> &outputs, const std::vector<ShapeInfo> &shape_traces, std::vector<PpDetResult> *det_results) {
     det_results->clear();
     DataBlob output_blob = outputs[0];
     float *output_data = (float*)output_blob.data;
@@ -55,8 +55,8 @@ bool PpDetPostProc::Run(const std::vector<DataBlob> &outputs, std::vector<ShapeI
             int hd = ymax - ymin;
             box.coordinate = {xmin, ymin, wd, hd};
             results->boxes.push_back(std::move(box));
+        }
     }
-
 }
 
 }//namespace
