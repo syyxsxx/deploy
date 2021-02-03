@@ -28,8 +28,8 @@ bool BasePreprocess::BuildTransform(const ConfigParser &parser) {
 }
 
 bool BasePreprocess::RunTransform(std::vector<cv::Mat> *imgs) {
-    for (int i=0; j < transforms.size(); i++) {
-        if (!transforms[j]->Run(imgs)) {
+    for (int i=0; i < transforms.size(); i++) {
+        if (!transforms[i]->Run(imgs)) {
             std::cerr << "Run transforms to image failed!" << std::endl;
             return false;
         }

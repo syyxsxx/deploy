@@ -27,7 +27,7 @@ bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlo
     inputs->clear();
     shape_traces->clear();
     int batchsize = imgs.size();
-    shape_traces.resize(batchsize);
+    shape_traces->resize(batchsize);
     DataBlob img_blob;
     DataBlob im_size_blob;
     ShapeInfer(shape_traces);
@@ -42,7 +42,7 @@ bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlo
         // img data for input
         std::vector<int> origin_size = {(*shape_traces)[i].shape[0][1], (*shape_traces)[i].shape[0][0]};
         int input_size = max_shape[0] * max_shape[1] * 3;
-        memcpy(img_blob.data + i * input_shape * sizeof(float) , image[i].data, input_size * sizeof(float));
+        memcpy(img_blob.data + i * input_size * sizeof(float) , image[i].data, input_size * sizeof(float));
         // Additional information for input
         if (model_arch_ == "YOLO") {
             memcpy(im_size_blob.data + i * 2 * sizeof(int), origin_size.data(), 2 * sizeof(int));
