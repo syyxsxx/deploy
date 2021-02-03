@@ -19,8 +19,15 @@
 #include <iostream>
 
 #include "include/deploy/common/blob.h"
+#include "include/deploy/engine/engine_config.h"
 
 #include "paddle_inference_api.h"
+
+#ifdef _WIN32
+#define OS_PATH_SEP "\\"
+#else
+#define OS_PATH_SEP "/"
+#endif
 
 namespace Deploy {
 
@@ -28,7 +35,7 @@ class PaddleInferenceEngine{
   public:
     void Init(std::string model_dir, PaddleInferenceConfig &config);
 
-    void Infer(std::vector<DateBlob>> &inputs, std::vector<DateBlob> *outputs);
+    void Infer(std::vector<DataBlob> &inputs, std::vector<DataBlob> *outputs);
   private:
     std::unique_ptr<paddle::PaddlePredictor> predictor_;
 

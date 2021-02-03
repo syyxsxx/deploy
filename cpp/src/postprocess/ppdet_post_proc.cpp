@@ -18,8 +18,8 @@ namespace Deploy {
 
 void PpDetPostProc::Init(const ConfigParser &parser) {
     model_arch_ = parser.Get<std::string>("model_name");
-    labels.clear();
-    for (const auto &item : parser.Get<std::string>("labels") {
+    labels_.clear();
+    for (const auto &item : parser.Get<std::string>("labels") ) {
         int index = labels.size();
         labels[index] = item.as<std::string>();
     }

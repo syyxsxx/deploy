@@ -66,7 +66,7 @@ bool ConfigParser::DetParser(const YAML::Node &det_config) {
     if(det_config["Preprocess"].IsDefined()) {
         YAML::Node preprocess_info = det_config["Preprocess"];
         for (const auto& preprocess_op : preprocess_info) {
-            if(!DetParserTansforms(preprocess_op)) {
+            if(!DetParserTransforms(preprocess_op)) {
                 std::cerr << "Fail to parser PaddleDetection transforms" << std::endl;
                 return false;
             }

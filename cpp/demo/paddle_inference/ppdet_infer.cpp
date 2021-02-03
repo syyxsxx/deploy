@@ -18,6 +18,9 @@
 #include "include/deploy/common/config.h"
 #include "include/deploy/common/blob.h"
 #include "include/deploy/engine/engine_config.h"
+#include "include/deploy/postprocess/ppdet_pre_proc.h"
+#include "include/deploy/preprocess/ppdet_pre_proc.h"
+#include "include/deploy/engine/ppinference_engine.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>

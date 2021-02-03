@@ -17,7 +17,7 @@
 
 namespace Deploy {
 
-void PaddleInferenceEngine::Init(std::string model_dir, PPI_config &engine_config) {
+void PaddleInferenceEngine::Init(std::string model_dir, PaddleInferenceConfig &engine_config) {
     paddle::AnalysisConfig config;
     std::string prog_file = model_dir + OS_PATH_SEP + "__model__";
     std::string params_file = model_dir + OS_PATH_SEP + "__params__";
@@ -63,7 +63,7 @@ void PaddleInferenceEngine::Init(std::string model_dir, PPI_config &engine_confi
     predictor_ = std::move(CreatePaddlePredictor(config));
 }
 
-void PaddleInferenceEngine::Infer(std::vector<DateBlob> &inputs, std::vector<DateBlob> *outputs) {
+void PaddleInferenceEngine::Infer(std::vector<DataBlob> &inputs, std::vector<DataBlob> *outputs) {
     for (int i = 0; i < inputs.size(); i++) {
         auto in_tensor = predictor_->GetInputTensor(inputs[i].name);
         in_tensor->Reshape(inputs[i].shape);

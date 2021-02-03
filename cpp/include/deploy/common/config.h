@@ -19,11 +19,7 @@
 
 #include "yaml-cpp/yaml.h"
 
-#ifdef _WIN32
-#define OS_PATH_SEP "\\"
-#else
-#define OS_PATH_SEP "/"
-#endif
+
 
 namespace Deploy {
 

@@ -23,7 +23,7 @@ bool DetProecess::Init(const ConfigParser &parser) {
     model_arch_ = parser.Get<std::string>("model_name")
 }
 
-bool DetProecess::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *inputs, std::vector<ShapeInfo> *shape_traces){
+bool DetProecess::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *inputs, std::vector<ShapeInfo> *shape_traces) {
     inputs.clear();
     int batchsize = imgs.size();
     DataBlob img_blob;

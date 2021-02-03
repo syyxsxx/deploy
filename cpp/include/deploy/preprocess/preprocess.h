@@ -27,9 +27,6 @@ namespace Deploy {
 
 class BasePreprocess {
   public:
-    BasePreprocess() {}
-    
-    ~BasePreprocess() {}
   
     virtual bool Init(const ConfigParser &parser) = 0;
 

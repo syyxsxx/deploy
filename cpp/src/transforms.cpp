@@ -114,8 +114,8 @@ bool ResizeByLong::Shape_infer(ShapeInfo* shape_trace) {
     std::vector<int> before_shape = shape_trace->shape.back();
     shape_trace->transform_order.push_back("ResizeByLong");
     float scale = GenerateScale(before_shape[0], before_shape[1]);
-    int width = static_cast<int>(round(scale * im->cols));
-    int height = static_cast<int>(round(scale * im->rows));
+    int width = static_cast<int>(round(scale * before_shape[0]));
+    int height = static_cast<int>(round(scale * before_shape[1]));
     std::vector<int> after_shape = {width, height};
     shape_trace->shape.push_back(after_shape);
     return true;
@@ -295,7 +295,7 @@ bool Permute::Run(cv::Mat* im) {
   int rh = im->rows;
   int rw = im->cols;
   int rc = im->channels();
-  float data = im->data;
+  float *data = (float*)im->data;
   for (int i = 0; i < rc; ++i) {
     cv::extractChannel(*im, cv::Mat(rh, rw, CV_32FC1, data + i * rh * rw), i);
   }
