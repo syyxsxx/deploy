@@ -36,7 +36,7 @@ class BasePreprocess {
 
     bool BuildTransform(const ConfigParser &parser);
 
-    bool RunTransform(std::vector<cv::Mat> *imgs);
+    bool RunTransform(const std::vector<cv::Mat> &imgs, std::vector<cv::Mat> *imgs);
 
     bool ShapeInfer (std::vector<ShapeInfo> *shape_traces);
     

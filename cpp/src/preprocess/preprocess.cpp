@@ -64,7 +64,7 @@ bool BasePreprocess::ShapeInfer(const std::vector<cv::Mat> &imgs, std::vector<Sh
         (*shape_traces)[0].shape.push_back(std::move(max_shape));
         (*shape_traces)[0].transform_order.push_back("Padding");
     }
-    return true
+    return true;
 }
 
 std::vector<int> BasePreprocess::GetMaxSize() {
