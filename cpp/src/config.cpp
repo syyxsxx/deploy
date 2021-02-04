@@ -34,7 +34,7 @@ bool ConfigParser::Load(const std::string &cfg_file, const std::string &pp_type)
     
 }
 
-YAML::Node ConfigParser::GetTransforms() {
+YAML::Node ConfigParser::GetTransforms() const {
     return config_["transforms"];
 }
 
