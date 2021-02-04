@@ -98,15 +98,16 @@ void PaddleInferenceEngine::Infer(std::vector<DataBlob> &inputs, std::vector<Dat
         if (output.dtype == 0) {
             output_tensor->copy_to_cpu((float*)(output.data));
         }
-        else if (inputs[i].dtype == 1) {
-            in_tensor->copy_from_cpu((int64_t*)(output.data));
+        else if (output.dtype == 1) {
+            output_tensor->copy_from_cpu((int64_t*)(output.data));
         }
-        else if (inputs[i].dtype == 2) {
-            in_tensor->copy_from_cpu((int*)(output.data));
+        else if (output.dtype == 2) {
+            output_tensor->copy_from_cpu((int*)(output.data));
         }
-        else if (inputs[i].dtype == 3) {
-            in_tensor->copy_from_cpu((uint8_t*)(output.data));
+        else if (output.dtype == 3) {
+            output_tensor->copy_from_cpu((uint8_t*)(output.data));
         }
+        outputs->push_back(std::move(output));
     }
 }
 
