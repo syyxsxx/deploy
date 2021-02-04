@@ -92,13 +92,22 @@ void PaddleInferenceEngine::Infer(std::vector<DataBlob> &inputs, std::vector<Dat
         DataBlob output;
         output.name = output_name;
         output.shape.assign(output_tensor_shape.begin(), output_tensor_shape.end());
-        output_tensor->copy_to_cpu(output.data);
         output.dtype = paddle::PaddleDType(output_tensor->type());
         output.lod = output_tensor->lod();
         outputs->push_back(std::move(output));
+        if (output.dtype == 0) {
+            output_tensor->copy_to_cpu((float*)(output.data));
+        }
+        else if (inputs[i].dtype == 1) {
+            in_tensor->copy_from_cpu((int64_t*)(output.data));
+        }
+        else if (inputs[i].dtype == 2) {
+            in_tensor->copy_from_cpu((int*)(output.data));
+        }
+        else if (inputs[i].dtype == 3) {
+            in_tensor->copy_from_cpu((uint8_t*)(output.data));
+        }
     }
-    
-
 }
 
     
