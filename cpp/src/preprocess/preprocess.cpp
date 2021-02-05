@@ -18,11 +18,12 @@ namespace Deploy {
 
 bool BasePreprocess::BuildTransform(const ConfigParser &parser) {
     transforms.clear();
-    YAML::Node transforms_node = parser.GetTransforms();
-    for (const auto& node : transforms_node) {
-        std::string name = node.begin()->first.as<std::string>();
+    std::string transform_node = "transforms";
+    YAML::Node transforms_node = parser.GetNode(transform_node);
+    for(YAML::const_iterator it = transforms_node.begin(); it != transforms_node.end(); ++it) {
+        std::string name = it->first.as<std::string>();
         std::shared_ptr<Transform> transform = CreateTransform(name);
-        transform->Init(node.begin()->second);
+        transform->Init(it->second);
         transforms.push_back(transform);
     }
 }
@@ -46,7 +47,7 @@ bool BasePreprocess::ShapeInfer(const std::vector<cv::Mat> &imgs, std::vector<Sh
         std::vector<int> origin_size = {imgs[i].cols, imgs[i].rows};
         im_shape.transform_order.push_back("Origin");
         im_shape.shape.push_back(origin_size);
-        if (!transforms[i]->Shape_infer(&im_shape)) {
+        if (!transforms[i]->ShapeInfer(&im_shape)) {
             std::cerr << "Apply shape inference failed!" << std::endl;
             return false;
         }

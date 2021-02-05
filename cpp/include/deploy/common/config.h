@@ -36,7 +36,7 @@ class ConfigParser {
       return config_[name].as<T>();
     }
 
-    YAML::Node GetTransforms() const;
+    YAML::Node GetNode(const std::string &node_name) const;
     
   private:
     bool DetParser(const YAML::Node &det_config);

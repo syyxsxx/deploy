@@ -34,8 +34,8 @@ bool ConfigParser::Load(const std::string &cfg_file, const std::string &pp_type)
     
 }
 
-YAML::Node ConfigParser::GetTransforms() const {
-    return config_["transforms"];
+YAML::Node ConfigParser::GetNode(const std::string &node_name) const {
+    return config_[node_name];
 }
 
 bool ConfigParser::DetParser(const YAML::Node &det_config) {
@@ -54,7 +54,7 @@ bool ConfigParser::DetParser(const YAML::Node &det_config) {
     if(det_config["label_list"].IsDefined()) {
         int i = 0;
         for (const auto& label : det_config["label_list"]) {
-            config_["lables"][i] = label.as<std::string>();
+            config_["labels"][i] = label.as<std::string>();
             i++;
         }
     }
@@ -76,26 +76,27 @@ bool ConfigParser::DetParser(const YAML::Node &det_config) {
         std::cerr << "Fail to find Preprocess in  PaddleDection yaml file" << std::endl;
         return false;
     }
+    return true;
 
 }
 
 bool ConfigParser::DetParserTransforms(const YAML::Node &preprocess_op) {
     if (preprocess_op["type"].as<std::string>() == "Normalize") {
-        std::vector<float> mean = preprocess_op.as<std::vector<float>>();
-        std::vector<float> std = preprocess_op.as<std::vector<float>>();
+        std::vector<float> mean = preprocess_op["mean"].as<std::vector<float>>();
+        std::vector<float> std = preprocess_op["std"].as<std::vector<float>>();
         config_["transforms"]["Normalize"]["is_scale"] = preprocess_op["is_scale"].as<bool>();
         for (int i = 0; i < mean.size(); i++) {
             config_["transforms"]["Normalize"]["mean"].push_back(mean[i]);
             config_["transforms"]["Normalize"]["std"].push_back(std[i]);
             config_["transforms"]["Normalize"]["min_val"].push_back(0);
             config_["transforms"]["Normalize"]["max_val"].push_back(255);
-        }    
+        }   
         return true;    
     }
     else if (preprocess_op["type"].as<std::string>() == "Permute") {
-        config_["transforms"]["Permute"] = true;
+        config_["transforms"]["Permute"]["is_permute"] = true;
         if (preprocess_op["to_bgr"]) {
-            config_["transforms"]["RGB2BRG"] = true;
+            config_["transforms"]["RGB2BGR"]["is_rgb2bgr"] = true;
         }
         return true;
     }
