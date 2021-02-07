@@ -1,5 +1,5 @@
   
-// Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserved.
+// Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class BasePreprocess {
 
     bool RunTransform(std::vector<cv::Mat> *imgs);
 
-    bool ShapeInfer (const std::vector<cv::Mat> &imgs, std::vector<ShapeInfo> *shape_traces);
+    bool ShapeInfer(const std::vector<cv::Mat> &imgs, std::vector<ShapeInfo> *shape_traces);
     
     std::vector<std::shared_ptr<Transform>> transforms;
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserved.
+// Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ bool PaddleDetPostProc::Run(const std::vector<DataBlob> &outputs, const std::vec
     auto lod_vector = output_blob.lod;
     int batchsize = shape_traces.size();
     //box postprocess
-    det_results->resize(batchsize);
     for (int i = 0; i < lod_vector[0].size() - 1; ++i) {
         int rh = 1;
         int rw = 1;

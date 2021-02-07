@@ -1,4 +1,4 @@
-// Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserved.
+// Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,14 +27,13 @@ bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlo
     inputs->clear();
     shape_traces->clear();
     int batchsize = imgs.size();
-    shape_traces->resize(batchsize);
     DataBlob img_blob;
     DataBlob im_size_blob;
     ShapeInfer(imgs, shape_traces);
     std::vector<int> max_shape = GetMaxSize();
-    std::vector<cv::Mat> image;
-    image.assign(imgs.begin(), imgs.end());
-    if (!RunTransform(&image)) {
+    std::vector<cv::Mat> images;
+    images.assign(imgs.begin(), imgs.end());
+    if (!RunTransform(&images)) {
         std::cerr << "Apply transforms to image failed!" << std::endl;
         return false;
     }

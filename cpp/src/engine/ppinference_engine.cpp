@@ -1,4 +1,4 @@
-// Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserved.
+// Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ void PaddleInferenceEngine::Init(std::string model_dir, PaddleInferenceConfig &e
     paddle::AnalysisConfig config;
     std::string prog_file = model_dir + OS_PATH_SEP + "__model__";
     std::string params_file = model_dir + OS_PATH_SEP + "__params__";
+    config.SetModel(prog_file, params_file);
     if (engine_config.use_mkl && !engine_config.use_gpu) {
         config.EnableMKLDNN();
         config.SetCpuMathLibraryNumThreads(engine_config.mkl_thread_num);

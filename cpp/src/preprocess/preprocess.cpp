@@ -1,4 +1,4 @@
-// Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserved.
+// Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,6 +29,9 @@ bool BasePreprocess::BuildTransform(const ConfigParser &parser) {
 }
 
 bool BasePreprocess::RunTransform(std::vector<cv::Mat> *imgs) {
+    for (int i = 0; i < imgs->size(); i++) {
+        (*imgs)[i].convertTo((*imgs)[i], CV_32FC((*imgs)[i].channels()));
+    }
     for (int i=0; i < transforms.size(); i++) {
         if (!transforms[i]->Run(imgs)) {
             std::cerr << "Run transforms to image failed!" << std::endl;
@@ -61,9 +64,9 @@ bool BasePreprocess::ShapeInfer(const std::vector<cv::Mat> &imgs, std::vector<Sh
         shape_traces->push_back(std::move(im_shape));
     }
     for (int i = 0; i < batchsize; i++) {
-        std::vector<int> max_shape;
-        (*shape_traces)[0].shape.push_back(std::move(max_shape));
-        (*shape_traces)[0].transform_order.push_back("Padding");
+        std::vector<int> max_shape = GetMaxSize();
+        (*shape_traces)[i].shape.push_back(std::move(max_shape));
+        (*shape_traces)[i].transform_order.push_back("Padding");
     }
     return true;
 }
