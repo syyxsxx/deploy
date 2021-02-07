@@ -30,7 +30,7 @@ void PaddleDetPostProc::Init(const ConfigParser &parser) {
 bool PaddleDetPostProc::Run(const std::vector<DataBlob> &outputs, const std::vector<ShapeInfo> &shape_traces, std::vector<PaddleDetResult> *det_results) {
     det_results->clear();
     DataBlob output_blob = outputs[0];
-    float *output_data = (float*)output_blob.data;
+    float *output_data = (float*)(output_blob.data.data());
     auto lod_vector = output_blob.lod;
     int batchsize = shape_traces.size();
     //box postprocess

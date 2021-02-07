@@ -70,16 +70,24 @@ void PaddleInferenceEngine::Infer(std::vector<DataBlob> &inputs, std::vector<Dat
         auto in_tensor = predictor_->GetInputTensor(inputs[i].name);
         in_tensor->Reshape(inputs[i].shape);
         if (inputs[i].dtype == 0) {
-            in_tensor->copy_from_cpu((float*)inputs[i].data);
+            float *im_tensor_data;
+            im_tensor_data = (float*)(inputs[i].data.data());
+            in_tensor->copy_from_cpu(im_tensor_data);
         }
         else if (inputs[i].dtype == 1) {
-            in_tensor->copy_from_cpu((int64_t*)inputs[i].data);
+            int64_t *im_tensor_data;
+            im_tensor_data = (int64_t*)(inputs[i].data.data());
+            in_tensor->copy_from_cpu(im_tensor_data);
         }
         else if (inputs[i].dtype == 2) {
-            in_tensor->copy_from_cpu((int*)inputs[i].data);
+            int *im_tensor_data;
+            im_tensor_data = (int*)(inputs[i].data.data());
+            in_tensor->copy_from_cpu(im_tensor_data);
         }
         else if (inputs[i].dtype == 3) {
-            in_tensor->copy_from_cpu((uint8_t*)inputs[i].data);
+            uint8_t *im_tensor_data;
+            im_tensor_data = (uint8_t*)(inputs[i].data.data());
+            in_tensor->copy_from_cpu(im_tensor_data);
         }
     }
     //predict
@@ -95,18 +103,25 @@ void PaddleInferenceEngine::Infer(std::vector<DataBlob> &inputs, std::vector<Dat
         output.shape.assign(output_tensor_shape.begin(), output_tensor_shape.end());
         output.dtype = paddle::PaddleDType(output_tensor->type());
         output.lod = output_tensor->lod();
-        outputs->push_back(std::move(output));
+        int size = 1;
+        for (const auto& i : output_tensor_shape) {
+            size *= i;
+        }
         if (output.dtype == 0) {
-            output_tensor->copy_to_cpu((float*)(output.data));
+            output.data.resize(size * sizeof(float));
+            output_tensor->copy_to_cpu((float*)output.data.data());
         }
         else if (output.dtype == 1) {
-            output_tensor->copy_from_cpu((int64_t*)(output.data));
+            output.data.resize(size * sizeof(int64_t));
+            output_tensor->copy_from_cpu((int64_t*)(output.data.data()));
         }
         else if (output.dtype == 2) {
-            output_tensor->copy_from_cpu((int*)(output.data));
+            output.data.resize(size * sizeof(int));
+            output_tensor->copy_from_cpu((int*)(output.data.data()));
         }
         else if (output.dtype == 3) {
-            output_tensor->copy_from_cpu((uint8_t*)(output.data));
+            output.data.resize(size * sizeof(uint8_t));
+            output_tensor->copy_from_cpu((uint8_t*)(output.data.data()));
         }
         outputs->push_back(std::move(output));
     }

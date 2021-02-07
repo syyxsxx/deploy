@@ -37,11 +37,13 @@ bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlo
         std::cerr << "Apply transforms to image failed!" << std::endl;
         return false;
     }
+    int input_size = max_shape[0] * max_shape[1] * 3;
+    img_blob.data.resize(input_size * batchsize * sizeof(float));
+    im_size_blob.data.resize(2 * batchsize * sizeof(int));
     for (int i=0; i < batchsize; i++) {
         // img data for input
         std::vector<int> origin_size = {(*shape_traces)[i].shape[0][1], (*shape_traces)[i].shape[0][0]};
-        int input_size = max_shape[0] * max_shape[1] * 3;
-        memcpy(img_blob.data + i * input_size * sizeof(float) , image[i].data, input_size * sizeof(float));
+        memcpy(img_blob.data + i * input_size * sizeof(float) , images[i].data, input_size * sizeof(float));
         // Additional information for input
         if (model_arch_ == "YOLO") {
             memcpy(im_size_blob.data + i * 2 * sizeof(int), origin_size.data(), 2 * sizeof(int));

@@ -29,7 +29,6 @@
 
 DEFINE_string(model_dir, "", "Path of inference model");
 DEFINE_string(cfg_file, "", "Path of yaml file");
-DEFINE_string(pp_type, "", "Type of Paddle toolkit");
 DEFINE_string(image, "", "Path of test image file");
 DEFINE_string(image_list, "", "Path of test image list file");
 DEFINE_bool(use_gpu, false, "Infering with GPU or CPU");

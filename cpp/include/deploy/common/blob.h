@@ -22,7 +22,7 @@ namespace Deploy {
 class DataBlob{
   public:
     // data
-    char *data;
+    std::vector<char> data;
     
     // data name
     std::string name;
