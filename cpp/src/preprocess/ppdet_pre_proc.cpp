@@ -43,7 +43,7 @@ bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlo
     for (int i=0; i < batchsize; i++) {
         // img data for input
         std::vector<int> origin_size = {(*shape_traces)[i].shape[0][1], (*shape_traces)[i].shape[0][0]};
-        memcpy(img_blob.data.data* + i * input_size * sizeof(float) , images[i].data, input_size * sizeof(float));
+        memcpy(img_blob.data.data() + i * input_size * sizeof(float) , images[i].data, input_size * sizeof(float));
         // Additional information for input
         if (model_arch_ == "YOLO") {
             memcpy(im_size_blob.data.data() + i * 2 * sizeof(int), origin_size.data(), 2 * sizeof(int));
