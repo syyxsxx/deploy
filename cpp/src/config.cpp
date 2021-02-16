@@ -95,7 +95,7 @@ bool ConfigParser::DetParserTransforms(const YAML::Node &preprocess_op) {
     }
     else if (preprocess_op["type"].as<std::string>() == "Permute") {
         config_["transforms"]["Permute"]["is_permute"] = true;
-        if (preprocess_op["to_bgr"]) {
+        if (preprocess_op["to_bgr"].as<bool>() == true) {
             config_["transforms"]["RGB2BGR"]["is_rgb2bgr"] = true;
         }
         return true;
