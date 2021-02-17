@@ -343,12 +343,13 @@ bool RGB2BGR::ShapeInfer(ShapeInfo* shape_trace) {
 bool Permute::Run(std::vector<cv::Mat> *ims) {
   int batch = ims->size();
   for (int i = 0; i < batch; i++) {
+      cv::Mat im = (*ims)[i].clone();
       int rh = (*ims)[i].rows;
       int rw = (*ims)[i].cols;
       int rc = (*ims)[i].channels();
       float *data = (float*)((*ims)[i]).data;
       for (int j = 0; j < rc; ++j) {
-          cv::extractChannel((*ims)[i], cv::Mat(rh, rw, CV_32FC1, data + j * rh * rw), j);
+          cv::extractChannel(im, cv::Mat(rh, rw, CV_32FC1, data + j * rh * rw), j);
       }
   }
   return true;

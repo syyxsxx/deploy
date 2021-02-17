@@ -33,6 +33,9 @@ bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlo
     std::vector<int> max_shape = GetMaxSize();
     std::vector<cv::Mat> images;
     images.assign(imgs.begin(), imgs.end());
+    for (int i = 0; i < images.size(); i++) {
+        cv::cvtColor(images[i], images[i], cv::COLOR_BGR2RGB);        
+    }
     if (!RunTransform(&images)) {
         std::cerr << "Apply transforms to image failed!" << std::endl;
         return false;
@@ -42,10 +45,10 @@ bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlo
     im_size_blob.data.resize(2 * batchsize * sizeof(int));
     for (int i=0; i < batchsize; i++) {
         // img data for input
-        std::vector<int> origin_size = {(*shape_traces)[i].shape[0][1], (*shape_traces)[i].shape[0][0]};
         memcpy(img_blob.data.data() + i * input_size * sizeof(float) , images[i].data, input_size * sizeof(float));
         // Additional information for input
         if (model_arch_ == "YOLO") {
+            std::vector<int> origin_size = {(*shape_traces)[i].shape[0][1], (*shape_traces)[i].shape[0][0]};
             memcpy(im_size_blob.data.data() + i * 2 * sizeof(int), origin_size.data(), 2 * sizeof(int));
         }
     }
