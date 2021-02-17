@@ -238,4 +238,15 @@ class Permute : public Transform {
 
 };
 
+class Convert : pubulic Transform {
+  public:
+    virtual void Init(const YAML::Node& item) {
+      dtype_ = item["dtype"].as<std::string>();
+    }
+    virtual bool Run(std::vector<cv::Mat> *ims);
+    virtual bool ShapeInfer(ShapeInfo* shape);
+  private:
+    std::string dtype_;
+}
+
 }//namespace

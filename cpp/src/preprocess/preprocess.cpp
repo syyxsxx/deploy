@@ -29,9 +29,6 @@ bool BasePreprocess::BuildTransform(const ConfigParser &parser) {
 }
 
 bool BasePreprocess::RunTransform(std::vector<cv::Mat> *imgs) {
-    for (int i = 0; i < imgs->size(); i++) {
-        (*imgs)[i].convertTo((*imgs)[i], CV_32FC((*imgs)[i].channels()));
-    }
     for (int i=0; i < transforms.size(); i++) {
         if (!transforms[i]->Run(imgs)) {
             std::cerr << "Run transforms to image failed!" << std::endl;

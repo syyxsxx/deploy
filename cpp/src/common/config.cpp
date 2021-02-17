@@ -90,6 +90,9 @@ bool ConfigParser::DetParserTransforms(const YAML::Node &preprocess_op) {
             config_["transforms"]["Normalize"]["std"].push_back(std[i]);
             config_["transforms"]["Normalize"]["min_val"].push_back(0);
             config_["transforms"]["Normalize"]["max_val"].push_back(255);
+        }
+        if (config_["transforms"]["Normalize"]["is_scale"] == true) {
+            config_["transforms"]["Convert"]["dtype"] = "float";
         }   
         return true;    
     }

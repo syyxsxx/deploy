@@ -363,4 +363,20 @@ bool Permute::ShapeInfer(ShapeInfo* shape_trace) {
 }
 
 
+bool Convert::Run(std::vector<cv::Mat> *ims) {
+  int batch = ims->size();
+  for (int i = 0; i < batch; i++) {
+      if (dtype_ == "float") {
+          (*ims)[i].convertTo((*imgs)[i], CV_32FC((*imgs)[i].channels()));
+      }
+  }
+  return true;
+}
+
+bool Convert::ShapeInfer(ShapeInfo* shape_trace) {
+    std::vector<int> before_shape = shape_trace->shape.back();
+    shape_trace->transform_order.push_back("Convert");
+    shape_trace->shape.push_back(before_shape);
+    return true;
+}
 }//namespace
