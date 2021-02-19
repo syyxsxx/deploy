@@ -82,6 +82,9 @@ bool ConfigParser::DetParser(const YAML::Node &det_config) {
 
 bool ConfigParser::DetParserTransforms(const YAML::Node &preprocess_op) {
     if (preprocess_op["type"].as<std::string>() == "Normalize") {
+        if (preprocess_op["is_scale"].as<bool>() == true) {
+            config_["transforms"]["Convert"]["dtype"] = "float";
+        }  
         std::vector<float> mean = preprocess_op["mean"].as<std::vector<float>>();
         std::vector<float> std = preprocess_op["std"].as<std::vector<float>>();
         config_["transforms"]["Normalize"]["is_scale"] = preprocess_op["is_scale"].as<bool>();
@@ -91,7 +94,7 @@ bool ConfigParser::DetParserTransforms(const YAML::Node &preprocess_op) {
             config_["transforms"]["Normalize"]["min_val"].push_back(0);
             config_["transforms"]["Normalize"]["max_val"].push_back(255);
         }
-        if (config_["transforms"]["Normalize"]["is_scale"] == true) {
+        if (config_["transforms"]["Normalize"]["is_scale"].as<bool>() == true) {
             config_["transforms"]["Convert"]["dtype"] = "float";
         }   
         return true;    

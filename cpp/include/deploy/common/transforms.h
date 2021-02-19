@@ -238,7 +238,7 @@ class Permute : public Transform {
 
 };
 
-class Convert : pubulic Transform {
+class Convert : public Transform {
   public:
     virtual void Init(const YAML::Node& item) {
       dtype_ = item["dtype"].as<std::string>();
@@ -247,6 +247,6 @@ class Convert : pubulic Transform {
     virtual bool ShapeInfer(ShapeInfo* shape);
   private:
     std::string dtype_;
-}
+};
 
 }//namespace

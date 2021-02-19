@@ -367,7 +367,7 @@ bool Convert::Run(std::vector<cv::Mat> *ims) {
   int batch = ims->size();
   for (int i = 0; i < batch; i++) {
       if (dtype_ == "float") {
-          (*ims)[i].convertTo((*imgs)[i], CV_32FC((*imgs)[i].channels()));
+          (*ims)[i].convertTo((*ims)[i], CV_32FC((*ims)[i].channels()));
       }
   }
   return true;

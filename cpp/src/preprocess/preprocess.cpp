@@ -95,6 +95,8 @@ std::shared_ptr<Transform> BasePreprocess::CreateTransform(
     return std::make_shared<RGB2BGR>();
   } else if (transform_name == "BGR2RGB") {
     return std::make_shared<BGR2RGB>();
+  } else if (transform_name == "Convert") {
+    return std::make_shared<Convert>();
   } else {
     std::cerr << "There's unexpected transform(name='" << transform_name
               << "')." << std::endl;
