@@ -24,26 +24,26 @@
 namespace Deploy {
 
 class ConfigParser {
-  public:
-    ConfigParser() {}
+ public:
+  ConfigParser() {}
 
-    ~ConfigParser() {}
+  ~ConfigParser() {}
 
-    bool Load(const std::string &cfg_file, const std::string &pp_type);
+  bool Load(const std::string &cfg_file, const std::string &pp_type);
 
-    template <typename T>
-    const T& Get(const std::string &name) const {
-      return config_[name].as<T>();
-    }
+  template <typename T>
+  const T& Get(const std::string &name) const {
+    return config_[name].as<T>();
+  }
 
-    YAML::Node GetNode(const std::string &node_name) const;
-    
-  private:
-    bool DetParser(const YAML::Node &det_config);
+  YAML::Node GetNode(const std::string &node_name) const;
 
-    bool DetParserTransforms(const YAML::Node &preprocess_op);
+ private:
+  bool DetParser(const YAML::Node &det_config);
 
-    YAML::Node config_;
+  bool DetParserTransforms(const YAML::Node &preprocess_op);
+
+  YAML::Node config_;
 };
 
-}//namespace
+}  // namespace Deploy

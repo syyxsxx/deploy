@@ -17,11 +17,12 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <memory>
 
 #include "include/deploy/common/blob.h"
 #include "include/deploy/engine/engine_config.h"
 
-#include "paddle_inference_api.h"
+#include "paddle_inference_api.h"  // NOLINT
 
 #ifdef _WIN32
 #define OS_PATH_SEP "\\"
@@ -32,14 +33,14 @@
 namespace Deploy {
 
 class PaddleInferenceEngine{
-  public:
-    void Init(std::string model_dir, PaddleInferenceConfig &config);
+ public:
+  void Init(const std::string model_dir, const PaddleInferenceConfig &config);
 
-    void Infer(std::vector<DataBlob> &inputs, std::vector<DataBlob> *outputs);
-  private:
-    std::unique_ptr<paddle::PaddlePredictor> predictor_;
+  void Infer(const std::vector<DataBlob> &inputs,
+            std::vector<DataBlob> *outputs);
 
-
+ private:
+  std::unique_ptr<paddle::PaddlePredictor> predictor_;
 };
 
-}
+}  // namespace Deploy

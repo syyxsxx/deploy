@@ -25,14 +25,15 @@
 namespace Deploy {
 
 class PaddleDetPreProc : public BasePreprocess {
-    public:
-        virtual bool Init(const ConfigParser &parser);
+ public:
+  virtual bool Init(const ConfigParser &parser);
 
-        virtual bool Run(const std::vector<cv::Mat> &imgs, std::vector<DataBlob> *inputs, std::vector<ShapeInfo> *shape_traces);
+  virtual bool Run(const std::vector<cv::Mat> &imgs,
+                  std::vector<DataBlob> *inputs,
+                  std::vector<ShapeInfo> *shape_traces);
 
-    private:
-        std::string model_arch_;
-    
+ private:
+    std::string model_arch_;
 };
 
-}//namespace
+}  // namespace Deploy

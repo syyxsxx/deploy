@@ -38,41 +38,41 @@ DEFINE_string(pptype, "det", "Type of PaddleToolKit");
 
 
 int main(int argc, char** argv) {
-    // Parsing command-line
-    google::ParseCommandLineFlags(&argc, &argv, true);
-    //parser yaml file
-    Deploy::ConfigParser parser;
-    parser.Load(FLAGS_cfg_file, FLAGS_pptype);
+  // Parsing command-line
+  google::ParseCommandLineFlags(&argc, &argv, true);
+  // parser yaml file
+  Deploy::ConfigParser parser;
+  parser.Load(FLAGS_cfg_file, FLAGS_pptype);
 
-    // data preprocess
-    // preprocess init
-    Deploy::PaddleDetPreProc detpreprocess;
-    detpreprocess.Init(parser);
-    // postprocess init
-    Deploy::PaddleDetPostProc detpostprocess;
-    detpostprocess.Init(parser);
-    //engine init
-    Deploy::PaddleInferenceEngine ppi_engine;
-    Deploy::PaddleInferenceConfig ppi_config;
-    ppi_engine.Init(FLAGS_model_dir, ppi_config);
-    if (FLAGS_image_list != "") {
-        //img_list
-    } else {
-        //read image
-        std::vector<cv::Mat> imgs;
-        cv::Mat img;
-        img = cv::imread(FLAGS_image, 1);
-        imgs.push_back(std::move(img));
-        //create inpus and shape_traces
-        std::vector<Deploy::ShapeInfo> shape_traces;
-        std::vector<Deploy::DataBlob> inputs;
-        //preprocess 
-        detpreprocess.Run(imgs, &inputs, &shape_traces);
-        //infer
-        std::vector<Deploy::DataBlob> outputs;
-        ppi_engine.Infer(inputs, &outputs);
-        //postprocess
-        std::vector<Deploy::PaddleDetResult> detresults;
-        detpostprocess.Run(outputs, shape_traces, &detresults);
-    }
+  // data preprocess
+  // preprocess init
+  Deploy::PaddleDetPreProc det_preprocess;
+  det_preprocess.Init(parser);
+  // postprocess init
+  Deploy::PaddleDetPostProc det_postprocess;
+  det_postprocess.Init(parser);
+  // engine init
+  Deploy::PaddleInferenceEngine ppi_engine;
+  Deploy::PaddleInferenceConfig ppi_config;
+  ppi_engine.Init(FLAGS_model_dir, ppi_config);
+  if (FLAGS_image_list != "") {
+    // img_list
+  } else {
+    // read image
+    std::vector<cv::Mat> imgs;
+    cv::Mat img;
+    img = cv::imread(FLAGS_image, 1);
+    imgs.push_back(std::move(img));
+    // create inpus and shape_traces
+    std::vector<Deploy::ShapeInfo> shape_traces;
+    std::vector<Deploy::DataBlob> inputs;
+    // preprocess
+    det_preprocess.Run(imgs, &inputs, &shape_traces);
+    // infer
+    std::vector<Deploy::DataBlob> outputs;
+    ppi_engine.Infer(inputs, &outputs);
+    // postprocess
+    std::vector<Deploy::PaddleDetResult> detresults;
+    det_postprocess.Run(outputs, shape_traces, &detresults);
+  }
 }

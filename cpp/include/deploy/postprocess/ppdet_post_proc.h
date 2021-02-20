@@ -12,7 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#pragma once
+
 #include <vector>
+#include <map>
+#include <string>
+
 #include "include/deploy/common/blob.h"
 #include "include/deploy/common/config.h"
 
@@ -51,12 +56,14 @@ struct PaddleDetResult {
 };
 
 class PaddleDetPostProc {
-    public:
-        void Init(const ConfigParser &parser);
-        bool Run(const std::vector<DataBlob> &outputs, const std::vector<ShapeInfo> &shape_traces, std::vector<PaddleDetResult> *det_results);
-    private:
-        std::string model_arch_;
-        std::map<int, std::string> labels_;
+ public:
+  void Init(const ConfigParser &parser);
+  bool Run(const std::vector<DataBlob> &outputs,
+          const std::vector<ShapeInfo> &shape_traces,
+          std::vector<PaddleDetResult> *det_results);
+ private:
+  std::string model_arch_;
+  std::map<int, std::string> labels_;
 };
 
-}//namespaces
+}  // namespace Deploy

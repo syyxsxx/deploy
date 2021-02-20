@@ -16,43 +16,41 @@
 
 #include <vector>
 #include <map>
+#include <string>
 
 namespace Deploy {
 
 class DataBlob{
-  public:
+ public:
     // data
-    std::vector<char> data;
-    
+  std::vector<char> data;
+
     // data name
-    std::string name;
+  std::string name;
 
     // data shape
-    std::vector<int> shape;
+  std::vector<int> shape;
 
-    /* 
+    /*
     data dtype
     0: FLOAT32
     1: INT64
     2: INT32
     3: UINT8
     */
-    int dtype;
+  int dtype;
 
-    //LoD信息
-    std::vector<std::vector<size_t>> lod;
-
+    // Lod Info
+  std::vector<std::vector<size_t>> lod;
 };
 
 class ShapeInfo{
-  public:
-    
+ public:
     // shape trace
-    std::vector<std::vector<int> > shape;
-    
+  std::vector<std::vector<int> > shape;
+
     // transform order
-    std::vector<std::string> transform_order;
-   
+  std::vector<std::string> transform_order;
 };
 
-}//namespace
+}  // namespace Deploy
