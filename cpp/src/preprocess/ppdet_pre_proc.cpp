@@ -83,7 +83,7 @@ bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs,
     if (model_arch_ == "TTFNet") {
       std::vector<float> scale = (*shape_traces)[i].GetScale();
       std::vector<float> scale_factor =
-            {scale[0], scale[1], scale[0], scale[1]}；
+            {scale[0], scale[1], scale[0], scale[1]};
       memcpy(scale_factor_blob.data.data() + i * 4 * sizeof(float),
             scale_factor.data(), 4 * sizeof(float));
     }

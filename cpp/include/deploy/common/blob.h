@@ -55,7 +55,7 @@ class ShapeInfo{
 
   // transform index
   int GetIndex(const std::string &name) {
-    std::vector<string>::iterator it =
+    std::vector<std::string>::iterator it =
       std::find(transform_order.begin(), transform_order.end(), name);
     if (it != transform_order.end()) {
       return (it - transform_order.begin());

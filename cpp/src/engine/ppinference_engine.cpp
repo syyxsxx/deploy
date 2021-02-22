@@ -69,19 +69,19 @@ void PaddleInferenceEngine::Infer(const std::vector<DataBlob> &inputs,
     in_tensor->Reshape(inputs[i].shape);
     if (inputs[i].dtype == 0) {
       float *im_tensor_data;
-      im_tensor_data = reinterpret_cast<const float*>(inputs[i].data.data());
+      im_tensor_data = (float*)(inputs[i].data.data());  // NOLINT
       in_tensor->copy_from_cpu(im_tensor_data);
     } else if (inputs[i].dtype == 1) {
       int64_t *im_tensor_data;
-      im_tensor_data = reinterpret_cast<const int64_t*>(inputs[i].data.data());
+      im_tensor_data = (int64_t*)(inputs[i].data.data());  // NOLINT
       in_tensor->copy_from_cpu(im_tensor_data);
     } else if (inputs[i].dtype == 2) {
       int *im_tensor_data;
-      im_tensor_data = reinterpret_cast<const int*>(inputs[i].data.data());
+      im_tensor_data = (int*)(inputs[i].data.data());  // NOLINT
       in_tensor->copy_from_cpu(im_tensor_data);
     } else if (inputs[i].dtype == 3) {
       uint8_t *im_tensor_data;
-      im_tensor_data = reinterpret_cast<const uint8_t*>(inputs[i].data.data());
+      im_tensor_data = (uint8_t*)(inputs[i].data.data());  // NOLINT
       in_tensor->copy_from_cpu(im_tensor_data);
     }
   }
