@@ -18,6 +18,7 @@
 #include <map>
 #include <string>
 #include <algorithm>
+#include <iostream>
 
 namespace Deploy {
 
