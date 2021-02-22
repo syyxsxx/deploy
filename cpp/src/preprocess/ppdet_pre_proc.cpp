@@ -31,6 +31,9 @@ bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs,
   int batchsize = imgs.size();
   DataBlob img_blob;
   DataBlob im_size_blob;
+  DataBlob im_info_blob;
+  DataBlob im_shape_blob;
+  DataBlob scale_factor_blob;
   ShapeInfer(imgs, shape_traces);
   std::vector<int> max_shape = GetMaxSize();
   std::vector<cv::Mat> images;
@@ -45,6 +48,9 @@ bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs,
   int input_size = max_shape[0] * max_shape[1] * 3;
   img_blob.data.resize(input_size * batchsize * sizeof(float));
   im_size_blob.data.resize(2 * batchsize * sizeof(int));
+  im_info_blob.data.resize(3 * batchsize * sizeof(float));
+  im_shape_blob.data.resize(3 * batchsize * sizeof(float));
+  scale_factor_blob.data.resize(4 * batchsize * sizeof(float));
   for (int i=0; i < batchsize; i++) {
     // img data for input
     memcpy(img_blob.data.data() + i * input_size * sizeof(float),
@@ -56,16 +62,67 @@ bool PaddleDetPreProc::Run(const std::vector<cv::Mat> &imgs,
       memcpy(im_size_blob.data.data() + i * 2 * sizeof(int),
             origin_size.data(), 2 * sizeof(int));
     }
+    if (model_arch_ == "RCNN") {
+      std::vector<float> im_info = (*shape_traces)[i].GetImInfo();
+      std::vector<float> im_shape =
+            {static_cast<float>((*shape_traces)[i].shape[0][1]),
+            static_cast<float>((*shape_traces)[i].shape[0][0]),
+            1};
+      memcpy(im_info_blob.data.data() + i * 3 * sizeof(float),
+            im_info.data(), 3 * sizeof(float));
+      memcpy(im_shape_blob.data.data() + i * 3 * sizeof(float),
+            im_shape.data(), 3 * sizeof(float));
+    }
+    if (model_arch_ == "RetinaNet" ||
+        model_arch_ == "EfficientDet" ||
+        model_arch_ == "FCOS") {
+      std::vector<float> im_info = (*shape_traces)[i].GetImInfo();
+      memcpy(im_info_blob.data.data() + i * 3 * sizeof(float),
+            im_info.data(), 3 * sizeof(float));
+    }
+    if (model_arch_ == "TTFNet") {
+      std::vector<float> scale = (*shape_traces)[i].GetScale();
+      std::vector<float> scale_factor =
+            {scale[0], scale[1], scale[0], scale[1]}；
+      memcpy(scale_factor_blob.data.data() + i * 4 * sizeof(float),
+            scale_factor.data(), 4 * sizeof(float));
+    }
   }
+  // Feed img data for input
   img_blob.shape = {batchsize, 3, max_shape[1], max_shape[0]};
   img_blob.dtype = 0;
   img_blob.name = "image";
   inputs->push_back(std::move(img_blob));
+  // Feed additional information for input
   if (model_arch_ == "YOLO") {
     im_size_blob.name = "im_size";
     im_size_blob.shape = {batchsize, 2};
     im_size_blob.dtype = 2;
     inputs->push_back(std::move(im_size_blob));
+  }
+  if (model_arch_ == "RCNN") {
+    im_info_blob.name = "im_info";
+    im_info_blob.shape = {batchsize, 3};
+    im_info_blob.dtype = 0;
+    inputs->push_back(std::move(im_info_blob));
+    im_shape_blob.name = "im_shape";
+    im_shape_blob.shape = {batchsize, 3};
+    im_shape_blob.dtype = 0;
+    inputs->push_back(std::move(im_shape_blob));
+  }
+  if (model_arch_ == "RetinaNet" ||
+      model_arch_ == "EfficientDet" ||
+      model_arch_ == "FCOS") {
+    im_info_blob.name = "im_info";
+    im_info_blob.shape = {batchsize, 3};
+    im_info_blob.dtype = 0;
+    inputs->push_back(std::move(im_info_blob));
+  }
+  if (model_arch_ == "TTFNet") {
+    scale_factor_blob.name = "scale_factor";
+    im_info_blob.shape = {batchsize, 4};
+    im_info_blob.dtype = 0;
+    inputs->push_back(std::move(scale_factor_blob));
   }
 }
 

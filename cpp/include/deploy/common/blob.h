@@ -22,13 +22,13 @@ namespace Deploy {
 
 class DataBlob{
  public:
-    // data
+  // data
   std::vector<char> data;
 
-    // data name
+  // data name
   std::string name;
 
-    // data shape
+  // data shape
   std::vector<int> shape;
 
     /*
@@ -40,17 +40,57 @@ class DataBlob{
     */
   int dtype;
 
-    // Lod Info
+  // Lod Info
   std::vector<std::vector<size_t>> lod;
 };
 
 class ShapeInfo{
  public:
-    // shape trace
+  // shape trace
   std::vector<std::vector<int> > shape;
 
-    // transform order
+  // transform order
   std::vector<std::string> transform_order;
+
+  // transform index
+  int GetIndex(const string &name) {
+    vector<string>::iterator it =
+      find(transform_order.begin(), transform_order.end(), name);
+    if (it != transform_order.end()) {
+      return (it - transform_order.begin());
+    } else {
+      std::cerr << "find " << name << " failed" << std::endl;
+      return -1;
+    }
+  }
+  // im_info = {h, w, scale_w}
+  std::vector<float> GetImInfo() {
+    int transforms_num = (*shape_traces)[i].shape.size() - 1;
+    float new_w =
+          static_cast<float>((*shape_traces)[i].shape[transforms_num][0]);
+    float origin_w = static_cast<float>((*shape_traces)[i].shape[0][0]);
+    float scale_w = new_w / origin_w;
+    std::vector<float> im_info =
+          {static_cast<float>((*shape_traces)[i].shape[transforms_num][1]),
+          static_cast<float>((*shape_traces)[i].shape[transforms_num][0]),
+          scale_w};
+    return im_info;
+  }
+
+  // scale = {scale_w, scale_h}
+  std::vector<float> GetScale() {
+    int transforms_num = (*shape_traces)[i].shape.size() - 1;
+    float new_w =
+          static_cast<float>((*shape_traces)[i].shape[transforms_num][0]);
+    float new_h =
+          static_cast<float>((*shape_traces)[i].shape[transforms_num][1]);
+    float origin_w = static_cast<float>((*shape_traces)[i].shape[0][0]);
+    float origin_h = static_cast<float>((*shape_traces)[i].shape[0][1]);
+    float scale_w = new_w / origin_w;
+    float scale_h = new_h / origin_h;
+    std::vector<float> scale = {scale_w, scale_h};
+    return scale;
+  }
 };
 
 }  // namespace Deploy
